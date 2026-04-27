@@ -54,3 +54,19 @@ This file documents the progress, stages, steps, decisions, open questions, resu
 
 ### Results
 - Setup script and core architecture developed in `.py` environment, explicitly mapped and prepped for SSH transport.
+
+---
+
+## Tooling Module: Remote Data Visualizer
+
+### Steps Taken
+- Installed `h5py`, `matplotlib`, `trimesh`, and `pyglet` directly into the local environment to support lightweight UI rendering.
+- Built explicit file `visualize_stage1.py` taking `--file` (to pass target `.hdf5`) and `--frame` indices.
+- Configured `--style` parsing to adapt between `points` (raw coordinate plotting) and `surface` modeling. 
+
+### Key Decisions
+- **Decoupled Environment:** Rendered the visualizer dependency tree to be purposefully separate from the intensive models, meaning it is safe to test locally while bypassing the main HaMeR weights.
+- **Topology Approximation:** Set `visualize_stage1.py` to attempt to create a structural convex hull wrapping the point cloud if `--style surface` is requested but the topological MANO face file is missing.
+
+### Open Questions
+- In the future, do we intend to commit the `MANO_RIGHT.pkl` topology into the repo, or require users to provide it manually due to SMPL open-source licensing restrictions?
