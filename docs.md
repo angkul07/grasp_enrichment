@@ -40,20 +40,32 @@ This file documents the progress, stages, steps, decisions, open questions, resu
 ## Stage 1.1: 3D Mesh Reconstruction for Human Hand
 
 ### Steps Taken
-- Designed `install_dependencies.sh` to install heavy PyTorch and detection libraries via `uv pip` securely within the virtual environment.
-- Created `run_stage1.py`, a robust Python pipeline wrapping HaMeR and MoGe-2 execution across an array of Egocentric `.mp4` video files.
-- Constructed parallel file architecture: configured the pipeline to target the `output/` directory, saving aligned 3D features into `[videoname]_stage1.hdf5` to isolate processed data from the raw source files.
-- Configured CLI control, particularly integrating the `--limit 2` arg for rapid environment testing.
+- Studied `third_party/hamer/demo.py` to understand the real HaMeR inference API.
+- Rewrote `run_stage1.py` from scratch using the actual HaMeR pipeline (no more placeholder mocks).
+- Updated `install_dependencies.sh` to include the full dependency chain: Detectron2, mmpose/mmcv, ViTPose submodule initialization, and the HaMeR checkpoint download.
+- Changed Python version from 3.11 → 3.10 to match HaMeR's documented requirement.
+
+### Pipeline Architecture (from demo.py analysis)
+The real HaMeR pipeline has 5 stages per frame:
+1. **Person Detection** (Detectron2 ViTDet) — finds person bounding boxes.
+2. **Whole-Body Keypoint Detection** (ViTPose) — detects 133 COCO-WholeBody keypoints per person, including 21 left-hand and 21 right-hand keypoints.
+3. **Hand BBox Extraction** — derives tight hand bounding boxes from keypoints with confidence > 0.5, requiring at least 3 valid keypoints.
+4. **HaMeR Inference** — `ViTDetDataset` wraps the image + hand bboxes + is_right flags into a dataset; `model(batch)` returns `pred_vertices` (MANO 778×3 mesh) and `pred_cam` (weak-perspective camera).
+5. **Camera Transform** — `cam_crop_to_full()` converts crop-space weak-perspective camera to full-image camera translation.
 
 ### Key Decisions
-- **Compute Limitation Mapping:** Due to the user's local RTX 2050 (4GB VRAM) being insufficient for concurrent MoGe-2 and HaMeR operations, `run_stage1.py` acts as a deployment-ready scaffolding pointing precisely at `lightning.ai` for final inference compute.
-- **Loguru Integration:** Used Loguru explicitly to maintain standard production-grade traces to `logs/stage1.log` as opposed to native print statements.
+- **Skipping Body Detection for Egocentric Data:** Since the footage is egocentric (first-person), the camera wearer's body is always present. We pass the full frame as a single person detection to ViTPose, eliminating the need for Detectron2's body detector at inference time.
+- **Per-Frame HDF5 Groups:** Output HDF5 uses per-frame groups (`frame_000000/`) instead of flat arrays, since the number of detected hands varies per frame (0, 1, or 2).
+- **HDF5 Schema:** Each frame group contains: `vertices` (N_hands, 778, 3), `cam_t` (N_hands, 3), `is_right` (N_hands,).
+- **Compute Limitation:** RTX 2050 (4GB VRAM) is insufficient — pipeline targets `lightning.ai` for actual processing.
 
 ### Open Questions
 - On the `lightning.ai` instance, will we need to orchestrate distributed GPU processing if the single GPU processing length over all 200+ videos proves too extensive computationally?
+- MoGe-2 depth estimation is not yet integrated into this script — it will be a separate pass or combined in a future revision.
 
 ### Results
-- Setup script and core architecture developed in `.py` environment, explicitly mapped and prepped for SSH transport.
+- `run_stage1.py` now uses the real HaMeR API: `download_models()`, `load_hamer()`, `ViTDetDataset`, `model(batch)`, `cam_crop_to_full()`.
+- `install_dependencies.sh` includes full dependency chain including ViTPose submodule + mmpose.
 
 ---
 
