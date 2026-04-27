@@ -1,0 +1,14 @@
+2026-04-27 11:13:13.586 | INFO     | __main__:main:103 - --- Starting Universal 3D HOI Stage 1.1 Pipeline ---
+2026-04-27 11:13:13.862 | INFO     | __main__:__init__:19 - Initializing Stage 1 Pipeline on device: cuda
+2026-04-27 11:13:13.863 | INFO     | __main__:_load_models:29 - Loading HaMeR Model...
+2026-04-27 11:13:13.863 | INFO     | __main__:_load_models:35 - Loading MoGe-2 Model...
+2026-04-27 11:13:13.864 | INFO     | __main__:main:111 - Limiting execution to 2 files as requested.
+2026-04-27 11:13:13.865 | INFO     | __main__:process_video:45 - Processing video: basic_pick_place/0.mp4
+2026-04-27 11:13:13.865 | INFO     | __main__:process_video:46 - Output parallel HDF5 will be saved to: output/0_stage1.hdf5
+2026-04-27 11:13:14.402 | INFO     | __main__:process_video:88 - Saving extracted 3D data to HDF5...
+2026-04-27 11:13:20.539 | SUCCESS  | __main__:process_video:92 - Successfully processed basic_pick_place/0.mp4
+2026-04-27 11:13:20.543 | INFO     | __main__:process_video:45 - Processing video: basic_pick_place/1.mp4
+2026-04-27 11:13:20.543 | INFO     | __main__:process_video:46 - Output parallel HDF5 will be saved to: output/1_stage1.hdf5
+2026-04-27 11:13:21.140 | INFO     | __main__:process_video:88 - Saving extracted 3D data to HDF5...
+2026-04-27 11:13:28.866 | SUCCESS  | __main__:process_video:92 - Successfully processed basic_pick_place/1.mp4
+2026-04-27 11:13:28.870 | INFO     | __main__:main:116 - --- Stage 1.1 Pipeline Execution Complete ---
