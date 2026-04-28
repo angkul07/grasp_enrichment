@@ -73,7 +73,34 @@ uv pip install -r ./third_party/moge/requirements.txt
 echo "Installing MoGe-2 as editable package..."
 uv pip install -e ./third_party/moge
 
-# ── 8. Fetch HaMeR demo data (checkpoint + MANO mean params) ────────────
+# ── 8. Grounded-SAM-2 (SAM2 + Grounding DINO for object segmentation) ──
+echo "Setting up Grounded-SAM-2..."
+if [ ! -d "third_party/Grounded-SAM-2" ]; then
+    echo "Cloning Grounded-SAM-2..."
+    git clone https://github.com/IDEA-Research/Grounded-SAM-2.git third_party/Grounded-SAM-2
+fi
+
+echo "Installing SAM2..."
+uv pip install -e ./third_party/Grounded-SAM-2/sam2
+
+echo "Installing Grounding DINO..."
+uv pip install -e ./third_party/Grounded-SAM-2/grounding_dino
+
+echo "Downloading SAM2 checkpoint..."
+mkdir -p third_party/Grounded-SAM-2/checkpoints
+if [ ! -f "third_party/Grounded-SAM-2/checkpoints/sam2.1_hiera_large.pt" ]; then
+    wget -q -P third_party/Grounded-SAM-2/checkpoints \
+        https://dl.fbaipublicfiles.com/segment_anything_2/092824/sam2.1_hiera_large.pt
+fi
+
+echo "Downloading Grounding DINO checkpoint..."
+mkdir -p third_party/Grounded-SAM-2/gdino_checkpoints
+if [ ! -f "third_party/Grounded-SAM-2/gdino_checkpoints/groundingdino_swint_ogc.pth" ]; then
+    wget -q -P third_party/Grounded-SAM-2/gdino_checkpoints \
+        https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
+fi
+
+# ── 9. Fetch HaMeR demo data (checkpoint + MANO mean params) ────────────
 echo "Fetching HaMeR model checkpoint..."
 cd third_party/hamer
 bash fetch_demo_data.sh

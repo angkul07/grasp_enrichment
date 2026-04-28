@@ -14,7 +14,12 @@ Closing the kinematic gap between human operations and robot execution via 3D me
   - [x] Integrate HaMeR for 3D hand pose estimation from egocentric RGB footage.
   - [ ] Apply MoGe-2 to extract monocular metric depth and align the hand in 3D space.
 - **Step 1.2**: Object Reconstruction
-  - Determine optimal tools (e.g., SAM2/FoundationPose) for extracting interacting object geometry from the video.
+  - [x] Determine optimal tools: **Grounding DINO** (text-prompted detection) + **SAM2** (video tracking) + **MoGe-2** (depth → 3D lifting).
+  - [ ] Run Grounding DINO with grasped object name from EgoDex `object` attr to auto-detect objects in frame 0.
+  - [ ] Use SAM2 VideoPredictor to track grasped object mask across all video frames.
+  - [ ] Extract MoGe-2 depth per frame, compute per-frame scale alignment to HaMeR depth (via hand wrist cam_t).
+  - [ ] Back-project object mask pixels into **HaMeR camera space** (same coordinate frame as hand mesh).
+  - [ ] Store object point cloud (max 2048 FPS-subsampled points) + mask in *_stage1.hdf5.
 - **Step 1.3**: Contact Retargeting
   - Implement ContactOpt for contact-aware retargeting.
   - Map human hand-object interactions to the robot end-effector URDF, generating initial robot joint trajectories and wrist poses.

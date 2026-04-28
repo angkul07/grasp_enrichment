@@ -89,9 +89,57 @@ The real HaMeR pipeline has 5 stages per frame:
 
 ---
 
-## Stage 1.1.2: Monocular Geometry Estimation (MoGe-2) [PLANNED]
+## Stage 1.2: Object Reconstruction
 
-### Next Steps
-- Implement `run_stage1_moge.py` to run MoGe-2 monocular depth extraction independently.
-- Iterate over the dataset and extract metric depth maps and 3D point maps.
-- Handle massive data footprint of full-resolution float32 point/depth maps by optionally compressing to float16 and storing in HDF5 format.
+### Objective
+Reconstruct the grasped object's 3D surface in HaMeR's camera space, so that
+ContactOpt (Step 1.3) can resolve hand–object interpenetration from HaMeR.
+
+### Architecture Decisions
+
+- **MoGe-2 for hands was abandoned** — MoGe-2 samples the scene surface at joint pixel locations,
+  which collapses 21 articulated joints into a single depth blob. HaMeR already provides a much
+  better 3D hand mesh. MoGe-2 is instead used **only for object depth**.
+
+- **Coordinate system: HaMeR camera space** — Everything (hand mesh, object point cloud) lives
+  in HaMeR's camera coordinate system (scaled pinhole: `scaled_focal = 5000/224 * max(H,W)`,
+  principal point at image center). This ensures ContactOpt operates on hand + object in a
+  single consistent frame.
+
+- **Per-frame depth scale alignment** — MoGe-2 produces metric depth (meters) while HaMeR's
+  camera Z values are in an arbitrary scale. A per-frame scale factor is computed by comparing
+  HaMeR hand depth (`cam_t[2]`) with MoGe-2 depth at the hand wrist pixel location.
+
+### Pipeline
+1. Parse grasped object name from EgoDex `object` attribute (e.g., `"object:stapler, color:black"` → `"stapler"`).
+2. Grounding DINO detects the object on frame 0 → bounding box.
+3. SAM2 VideoPredictor propagates the mask across all frames.
+4. MoGe-2 extracts depth per frame.
+5. Per-frame scale alignment + HaMeR-camera back-projection → 3D object point cloud.
+6. Farthest-point subsampled to 2048 points, stored in `*_stage1.hdf5`.
+
+### HDF5 Schema (appended to existing files)
+```
+attrs['object_name']        : str        # grasped object name
+
+frame_XXXXXX/
+    obj_mask           : bool (H, W)     # SAM2 binary mask (LZ4 compressed)
+    obj_points_3d      : float16 (N, 3)  # 3D point cloud in HaMeR camera space
+    attrs['obj_mask_valid']  : bool      # SAM2 tracking confidence flag
+    attrs['obj_n_points']    : int       # actual point count
+    attrs['obj_depth_scale'] : float     # MoGe→HaMeR scale factor used
+```
+
+### Key Files
+- `run_stage1_objects.py` — main object reconstruction script
+- `install_dependencies.sh` — updated with SAM2 + Grounding DINO installation
+
+### Open Questions
+- ContactOpt integration (Step 1.3): will the ~2048-point object surface be dense enough?
+  Can refine by increasing MAX_OBJ_POINTS if needed.
+
+### Visualization Fix
+- `visualize.py` was rewritten to handle the HaMeR / MoGe coordinate mismatch:
+  - `--mode hamer` plots HaMeR vertices with proper equal-aspect scaling
+  - `--mode both` uses side-by-side subplots with independent axis scaling
+  - Also supports rendering future object point clouds (`obj_points_3d`) alongside hands
