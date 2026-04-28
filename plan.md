@@ -11,8 +11,8 @@ This document outlines the step-by-step plan for the 3D Human-Object Interaction
 Closing the kinematic gap between human operations and robot execution via 3D mesh reconstruction and retargeting.
 
 - **Step 1.1**: 3D Mesh Reconstruction for Human Hand
-  - Integrate HaMeR for 3D hand pose estimation from egocentric RGB footage.
-  - Apply MoGe-2 to extract monocular metric depth and align the hand in 3D space.
+  - [x] Integrate HaMeR for 3D hand pose estimation from egocentric RGB footage.
+  - [ ] Apply MoGe-2 to extract monocular metric depth and align the hand in 3D space.
 - **Step 1.2**: Object Reconstruction
   - Determine optimal tools (e.g., SAM2/FoundationPose) for extracting interacting object geometry from the video.
 - **Step 1.3**: Contact Retargeting

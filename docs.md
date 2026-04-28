@@ -57,15 +57,15 @@ The real HaMeR pipeline has 5 stages per frame:
 - **Skipping Body Detection for Egocentric Data:** Since the footage is egocentric (first-person), the camera wearer's body is always present. We pass the full frame as a single person detection to ViTPose, eliminating the need for Detectron2's body detector at inference time.
 - **Per-Frame HDF5 Groups:** Output HDF5 uses per-frame groups (`frame_000000/`) instead of flat arrays, since the number of detected hands varies per frame (0, 1, or 2).
 - **HDF5 Schema:** Each frame group contains: `vertices` (N_hands, 778, 3), `cam_t` (N_hands, 3), `is_right` (N_hands,).
-- **Compute Limitation:** RTX 2050 (4GB VRAM) is insufficient — pipeline targets `lightning.ai` for actual processing.
+- **Compute Limitation:** Run successfully executed on a `lightning.ai` cloud instance.
 
 ### Open Questions
-- On the `lightning.ai` instance, will we need to orchestrate distributed GPU processing if the single GPU processing length over all 200+ videos proves too extensive computationally?
-- MoGe-2 depth estimation is not yet integrated into this script — it will be a separate pass or combined in a future revision.
+- None for HaMeR currently. Hand mesh reconstruction works as expected on the cloud environment.
 
 ### Results
 - `run_stage1.py` now uses the real HaMeR API: `download_models()`, `load_hamer()`, `ViTDetDataset`, `model(batch)`, `cam_crop_to_full()`.
 - `install_dependencies.sh` includes full dependency chain including ViTPose submodule + mmpose.
+- Successfully executed the `run_stage1.py` pipeline on `lightning.ai`, resulting in 25 `.hdf5` files containing the MANO mesh vertices, camera transformations, and handedness for each frame.
 
 ---
 
@@ -78,7 +78,20 @@ The real HaMeR pipeline has 5 stages per frame:
 
 ### Key Decisions
 - **Decoupled Environment:** Rendered the visualizer dependency tree to be purposefully separate from the intensive models, meaning it is safe to test locally while bypassing the main HaMeR weights.
-- **Topology Approximation:** Set `visualize_stage1.py` to attempt to create a structural convex hull wrapping the point cloud if `--style surface` is requested but the topological MANO face file is missing.
+- **Topology Approximation:** Set `visualize.py` to attempt to create a structural convex hull wrapping the point cloud if `--style surface` is requested but the topological MANO face file is missing.
 
 ### Open Questions
 - In the future, do we intend to commit the `MANO_RIGHT.pkl` topology into the repo, or require users to provide it manually due to SMPL open-source licensing restrictions?
+
+### Results
+- Successfully executed `visualize.py` to render 3D keypoint scatter plots for the extracted `.hdf5` files.
+- Visualizer accurately output `.mp4` animations and `.png` still frames for each processed video inside the `viz_output/` folder, confirming spatial coherence.
+
+---
+
+## Stage 1.1.2: Monocular Geometry Estimation (MoGe-2) [PLANNED]
+
+### Next Steps
+- Implement `run_stage1_moge.py` to run MoGe-2 monocular depth extraction independently.
+- Iterate over the dataset and extract metric depth maps and 3D point maps.
+- Handle massive data footprint of full-resolution float32 point/depth maps by optionally compressing to float16 and storing in HDF5 format.
