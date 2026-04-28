@@ -238,6 +238,7 @@ def main():
                 K_norm[1, :] /= H_vid   # fy, cy → normalised
                 hf.create_dataset('moge_K_norm', data=K_norm)
                 hf.attrs['moge_fov_x_deg'] = fov_x_deg
+                hf.attrs["joint_format"] = "MANO16+fingertips"
 
             for fidx in range(total_frames):
                 ret, frame = cap.read()
@@ -296,7 +297,14 @@ def main():
                     verts_i[:, 0] = (2 * is_r - 1) * verts_i[:, 0]
 
                     # MANO joints from mesh vertices via joint regressor
-                    joints_3d = J_regressor @ verts_i   # (21, 3)
+                    # joints_3d = J_regressor @ verts_i   # (21, 3)
+
+                    base_joints = J_regressor @ verts_i   # (16,3)
+
+                    TIP_IDS = [745, 317, 444, 556, 673]
+                    tips = verts_i[TIP_IDS]
+
+                    joints_3d = np.concatenate([base_joints, tips], axis=0)   # (21,3)
 
                     # Project to 2D using HaMeR's scaled pinhole model [F5]
                     xs, ys = project_joints_to_pixels(
