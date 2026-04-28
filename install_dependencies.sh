@@ -33,7 +33,7 @@ uv pip install torch torchvision torchaudio \
 
 # ── 3. Generic project dependencies ─────────────────────────────────────
 echo "Installing generic dependencies..."
-uv pip install loguru h5py opencv-python tqdm matplotlib trimesh pyglet
+uv pip install loguru h5py opencv-python tqdm matplotlib trimesh pyglet "numpy==1.23.5" mmengine
 
 # ── 4. HaMeR + its dependency chain ─────────────────────────────────────
 echo "Installing legacy chumpy (requires --no-build-isolation)..."
@@ -52,7 +52,7 @@ uv pip install hydra-core hydra-submitit-launcher hydra-colorlog pyrootutils ric
 
 # ── 5. Detectron2 (from source — required by HaMeR) ─────────────────────
 echo "Installing Detectron2 from GitHub..."
-uv pip install 'git+https://github.com/facebookresearch/detectron2.git'
+uv pip install --no-build-isolation 'git+https://github.com/facebookresearch/detectron2.git'
 
 # ── 6. ViTPose submodule + mmpose stack (hand keypoint detection) ────────
 echo "Initializing ViTPose submodule..."
@@ -61,8 +61,10 @@ git submodule update --init --recursive
 cd ../..
 
 echo "Installing mmcv and mmpose..."
+# uv pip install "mmcv==2.0.0" --no-build-isolation
 uv pip install "mmcv==1.3.9" --no-build-isolation
-uv pip install -v -e ./third_party/hamer/third-party/ViTPose
+uv pip install "mmpose==0.29.0"
+# uv pip install -v -e ./third_party/hamer/third-party/ViTPose
 
 # ── 7. MoGe-2 ───────────────────────────────────────────────────────────
 echo "Installing MoGe-2 requirements..."
