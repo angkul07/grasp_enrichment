@@ -1,30 +1,27 @@
-#!/usr/bin/env python3
 """
-visualize_obj.py
+visualize_obj.py — Hand + Object Visualization
 
-Visualize:
-1. HaMeR hand mesh vertices
-2. Object point cloud reconstructed in SAME HaMeR camera space
+Visualizes HaMeR hand meshes and object point clouds in HaMeR camera space.
+Both are stored in the same coordinate frame, so they should align directly.
 
-Reads *_stage1.hdf5 outputs from your Stage 1 / Stage 1.2 pipeline.
+Key design:
+  - Subplot 1: Combined overview (hands + object) — useful for seeing spatial
+    relationship, but individual details may be small
+  - Subplots 2+: Per-hand zoomed view with object overlay — shows finger
+    articulation clearly alongside nearby object points
 
 Usage:
-python visualize_obj.py \
-    --file output/0_stage1.hdf5 \
-    --frame 0
+  # Single frame PNG
+  python visualize_obj.py --file output/0_stage1.hdf5 --frame 0
 
-python visualize_obj.py \
-    --file output/0_stage1.hdf5 \
-    --animate
+  # Animated MP4
+  python visualize_obj.py --file output/0_stage1.hdf5 --animate
 
-Why this matters:
-Your object points are already backprojected into HaMeR camera space:
-(X,Y,Z) using scaled_focal + aligned depth.
-
-So hand vertices + object cloud should now align directly.
-:contentReference[oaicite:0]{index=0}
+  # Batch all files
+  python visualize_obj.py --batch --input_dir output --out_dir viz_output
 """
 
+import os
 import argparse
 import h5py
 import numpy as np
@@ -32,247 +29,256 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.animation import FuncAnimation, FFMpegWriter
 
 
-# ---------------------------------------------------------
+# --------------------------------------------------
 # Helpers
-# ---------------------------------------------------------
-def set_equal_axes(ax, pts):
-    """
-    Equal 3D aspect ratio.
-    """
+# --------------------------------------------------
+def zoom_axes(ax, pts, pad=1.3):
+    """Set equal-aspect 3D axes tightly around the given points."""
+    if pts.size == 0:
+        return
     mins = pts.min(axis=0)
     maxs = pts.max(axis=0)
-
     center = (mins + maxs) / 2.0
-    radius = (maxs - mins).max() / 2.0 + 1e-6
-
-    ax.set_xlim(center[0] - radius, center[0] + radius)
-    ax.set_ylim(center[1] - radius, center[1] + radius)
-    ax.set_zlim(center[2] - radius, center[2] + radius)
-
-
-def world_hand_vertices(vertices, cam_t, is_right):
-    """
-    Convert stored HaMeR local mesh -> camera/world coordinates.
-
-    vertices: (N,778,3)
-    cam_t:    (N,3)
-    is_right: (N,)
-    """
-    out = []
-
-    for i in range(len(vertices)):
-        v = vertices[i].copy()
-
-        # Undo right-hand mirror used in your pipeline
-        if int(is_right[i]) == 1:
-            v[:, 0] *= -1.0
-
-        v = v + cam_t[i][None, :]
-        out.append(v)
-
-    return out
+    span = max((maxs - mins).max(), 0.01)
+    r = span / 2.0 * pad
+    ax.set_xlim(center[0] - r, center[0] + r)
+    ax.set_ylim(center[1] - r, center[1] + r)
+    ax.set_zlim(center[2] - r, center[2] + r)
 
 
-def collect_all_points(hand_meshes, obj_pts):
-    pts = []
-
-    for h in hand_meshes:
-        if len(h) > 0:
-            pts.append(h)
-
-    if obj_pts is not None and len(obj_pts) > 0:
-        pts.append(obj_pts)
-
-    if len(pts) == 0:
-        return np.zeros((1, 3))
-
-    return np.concatenate(pts, axis=0)
+def load_hands(grp):
+    """Load HaMeR hand vertices in camera space. Returns list of (778,3) arrays."""
+    n = int(grp.attrs.get("n_hands", 0))
+    if n == 0:
+        return [], []
+    verts = grp["vertices"][:]   # (N, 778, 3)
+    cam_t = grp["cam_t"][:]      # (N, 3)
+    is_right = grp["is_right"][:]
+    hands = [verts[i] + cam_t[i] for i in range(n)]
+    sides = ["Right" if is_right[i] > 0.5 else "Left" for i in range(n)]
+    return hands, sides
 
 
-# ---------------------------------------------------------
-# Single frame render
-# ---------------------------------------------------------
-def render_frame(hf, frame_idx):
-    grp_name = f"frame_{frame_idx:06d}"
+def load_object(grp):
+    """Load object point cloud if available."""
+    if "obj_points_3d" not in grp:
+        return None
+    valid = grp.attrs.get("obj_mask_valid", True)
+    if not valid:
+        return None
+    pts = grp["obj_points_3d"][:].astype(np.float32)
+    if pts.shape[0] == 0:
+        return None
+    return pts
 
-    if grp_name not in hf:
-        print("Frame not found:", grp_name)
+
+COLORS = ["red", "blue", "green", "orange"]
+
+
+# --------------------------------------------------
+# Render a single frame
+# --------------------------------------------------
+def render_frame(fig, grp, frame_idx, object_name=""):
+    """Render one frame with overview + per-hand zoomed subplots."""
+    fig.clear()
+
+    hands, sides = load_hands(grp)
+    obj_pts = load_object(grp)
+    n_hands = len(hands)
+
+    if n_hands == 0 and obj_pts is None:
+        ax = fig.add_subplot(111)
+        ax.text(0.5, 0.5, f"Frame {frame_idx}\nNo data",
+                ha="center", va="center", fontsize=14)
+        ax.set_axis_off()
         return
 
-    grp = hf[grp_name]
+    # Layout: [overview] [hand0_zoom] [hand1_zoom] ...
+    n_cols = 1 + n_hands
+    axes = []
 
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection="3d")
+    # -- Overview subplot --
+    ax_ov = fig.add_subplot(1, n_cols, 1, projection="3d")
+    all_pts = []
 
-    hand_meshes = []
+    for i, hand in enumerate(hands):
+        ax_ov.scatter(hand[:, 0], hand[:, 1], hand[:, 2],
+                      s=0.5, alpha=0.3, c=COLORS[i % len(COLORS)])
+        all_pts.append(hand)
 
-    # ----------------------------
-    # Hand mesh
-    # ----------------------------
-    if "vertices" in grp:
-        vertices = grp["vertices"][:]
-        cam_t = grp["cam_t"][:]
-        is_right = grp["is_right"][:]
+    if obj_pts is not None:
+        ax_ov.scatter(obj_pts[:, 0], obj_pts[:, 1], obj_pts[:, 2],
+                      s=2, alpha=0.6, c="green", marker="^")
+        all_pts.append(obj_pts)
 
-        hand_meshes = world_hand_vertices(vertices, cam_t, is_right)
+    if all_pts:
+        zoom_axes(ax_ov, np.concatenate(all_pts))
 
-        for i, hand in enumerate(hand_meshes):
-            side = "Right" if int(is_right[i]) == 1 else "Left"
+    ax_ov.set_title("Overview", fontsize=9, fontweight="bold")
+    ax_ov.set_xlabel("X", fontsize=7)
+    ax_ov.set_ylabel("Y", fontsize=7)
+    ax_ov.set_zlabel("Z", fontsize=7)
+    ax_ov.tick_params(labelsize=5)
 
-            ax.scatter(
-                hand[:, 0],
-                hand[:, 1],
-                hand[:, 2],
-                s=1,
-                alpha=0.45,
-                label=f"{side} Hand",
-            )
+    # -- Per-hand zoomed subplots --
+    for i, hand in enumerate(hands):
+        ax = fig.add_subplot(1, n_cols, 2 + i, projection="3d")
+        color = COLORS[i % len(COLORS)]
 
-    # ----------------------------
-    # Object point cloud
-    # ----------------------------
-    obj_pts = None
+        # Hand vertices
+        ax.scatter(hand[:, 0], hand[:, 1], hand[:, 2],
+                   s=2, alpha=0.6, c=color, label=f"{sides[i]} hand")
 
-    if "obj_points_3d" in grp:
-        obj_pts = grp["obj_points_3d"][:].astype(np.float32)
+        # Object overlay (only points near this hand's Z range for clarity)
+        if obj_pts is not None:
+            hand_z_min = hand[:, 2].min()
+            hand_z_max = hand[:, 2].max()
+            z_margin = (hand_z_max - hand_z_min) * 5  # generous margin
 
-        if len(obj_pts) > 0:
-            ax.scatter(
-                obj_pts[:, 0],
-                obj_pts[:, 1],
-                obj_pts[:, 2],
-                s=6,
-                alpha=0.9,
-                label="Object",
-            )
+            nearby = obj_pts[
+                (obj_pts[:, 2] > hand_z_min - z_margin) &
+                (obj_pts[:, 2] < hand_z_max + z_margin)
+            ]
 
-    # ----------------------------
-    # Axis scaling
-    # ----------------------------
-    all_pts = collect_all_points(hand_meshes, obj_pts)
-    set_equal_axes(ax, all_pts)
+            if len(nearby) > 0:
+                ax.scatter(nearby[:, 0], nearby[:, 1], nearby[:, 2],
+                           s=3, alpha=0.5, c="green", marker="^",
+                           label=f"Object ({len(nearby)} pts)")
 
-    ax.set_xlabel("X")
-    ax.set_ylabel("Y")
-    ax.set_zlabel("Z")
+                # Zoom to include both hand and nearby object
+                combined = np.concatenate([hand, nearby])
+                zoom_axes(ax, combined)
+            else:
+                zoom_axes(ax, hand)
+        else:
+            zoom_axes(ax, hand)
 
-    title = f"{grp_name}"
-    if "object_name" in hf.attrs:
-        title += f" | Object: {hf.attrs['object_name']}"
+        ax.set_title(f"{sides[i]} Hand", fontsize=9,
+                     fontweight="bold", color=color)
+        ax.set_xlabel("X", fontsize=7)
+        ax.set_ylabel("Y", fontsize=7)
+        ax.set_zlabel("Z", fontsize=7)
+        ax.tick_params(labelsize=5)
+        ax.legend(fontsize=6, loc="upper left")
 
-    ax.set_title(title)
-    ax.legend()
-    plt.tight_layout()
-    plt.savefig("frame0.png", dpi=220, bbox_inches="tight")
-    print("saved frame0.png")
-
-
-# ---------------------------------------------------------
-# Animation
-# ---------------------------------------------------------
-def animate_file(hf):
-    frame_keys = sorted(
-        [k for k in hf.keys() if k.startswith("frame_")]
-    )
-
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection="3d")
-
-    def update(i):
-        ax.cla()
-
-        grp = hf[frame_keys[i]]
-
-        hand_meshes = []
-
-        if "vertices" in grp:
-            vertices = grp["vertices"][:]
-            cam_t = grp["cam_t"][:]
-            is_right = grp["is_right"][:]
-
-            hand_meshes = world_hand_vertices(vertices, cam_t, is_right)
-
-            for j, hand in enumerate(hand_meshes):
-                side = "Right" if int(is_right[j]) == 1 else "Left"
-
-                ax.scatter(
-                    hand[:, 0], hand[:, 1], hand[:, 2],
-                    s=1, alpha=0.45, label=side
-                )
-
-        obj_pts = None
-        if "obj_points_3d" in grp:
-            obj_pts = grp["obj_points_3d"][:].astype(np.float32)
-
-            if len(obj_pts) > 0:
-                ax.scatter(
-                    obj_pts[:, 0],
-                    obj_pts[:, 1],
-                    obj_pts[:, 2],
-                    s=6,
-                    alpha=0.9,
-                    label="Object"
-                )
-
-        all_pts = collect_all_points(hand_meshes, obj_pts)
-        set_equal_axes(ax, all_pts)
-
-        ax.set_xlabel("X")
-        ax.set_ylabel("Y")
-        ax.set_zlabel("Z")
-        ax.set_title(frame_keys[i])
-        ax.legend(loc="upper right")
-
-        ani = FuncAnimation(
-            fig,
-            update,
-            frames=len(frame_keys),
-            interval=120,
-            repeat=True
-        )
-
-        plt.tight_layout()
-
-        ani.save("animation_output.gif", writer="pillow", fps=8)
-        print("saved animation_output.gif")
-
-        plt.close(fig)
+    title = f"Frame {frame_idx}"
+    if object_name:
+        title += f"  |  Object: {object_name}"
+    fig.suptitle(title, fontsize=11, fontweight="bold")
+    fig.tight_layout()
 
 
-# ---------------------------------------------------------
+# --------------------------------------------------
+# Single frame to PNG
+# --------------------------------------------------
+def save_frame_png(hf, frame_idx, out_path):
+    grp_name = f"frame_{frame_idx:06d}"
+    if grp_name not in hf:
+        print(f"Frame {grp_name} not found!")
+        return
+
+    object_name = str(hf.attrs.get("object_name", ""))
+
+    # Width depends on number of hands
+    n_hands = int(hf[grp_name].attrs.get("n_hands", 0))
+    width = 7 * (1 + max(n_hands, 1))
+
+    fig = plt.figure(figsize=(width, 7))
+    render_frame(fig, hf[grp_name], frame_idx, object_name)
+    plt.savefig(out_path, dpi=200, bbox_inches="tight")
+    plt.close()
+    print(f"Saved: {out_path}")
+
+
+# --------------------------------------------------
+# Animate to MP4
+# --------------------------------------------------
+def save_animation(hf, out_path):
+    total = int(hf.attrs.get("total_frames", 0))
+    object_name = str(hf.attrs.get("object_name", ""))
+
+    fig = plt.figure(figsize=(21, 7))
+
+    def update(fidx):
+        grp_name = f"frame_{fidx:06d}"
+        if grp_name in hf:
+            render_frame(fig, hf[grp_name], fidx, object_name)
+
+    anim = FuncAnimation(fig, update, frames=total, interval=100)
+    writer = FFMpegWriter(fps=10, bitrate=2400)
+    anim.save(out_path, writer=writer, dpi=120)
+    plt.close()
+    print(f"Saved: {out_path}")
+
+
+# --------------------------------------------------
+# Batch processing
+# --------------------------------------------------
+def process_file(hdf5_path, out_dir):
+    base = os.path.splitext(os.path.basename(hdf5_path))[0]
+    save_dir = os.path.join(out_dir, base)
+    os.makedirs(save_dir, exist_ok=True)
+
+    print(f"Processing {base}...")
+
+    with h5py.File(hdf5_path, "r") as hf:
+        png_path = os.path.join(save_dir, "hand_object_frame0.png")
+        mp4_path = os.path.join(save_dir, f"{base}_hand_object.mp4")
+
+        save_frame_png(hf, 0, png_path)
+        save_animation(hf, mp4_path)
+
+    print(f"Done -> {save_dir}")
+
+
+# --------------------------------------------------
 # Main
-# ---------------------------------------------------------
+# --------------------------------------------------
 def main():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--file",
-        required=True,
-        help="Path to *_stage1.hdf5"
+    parser = argparse.ArgumentParser(
+        description="Visualize hand meshes + object point clouds from Stage 1 HDF5"
     )
-
-    parser.add_argument(
-        "--frame",
-        type=int,
-        default=0,
-        help="Frame index"
-    )
-
-    parser.add_argument(
-        "--animate",
-        action="store_true"
-    )
+    parser.add_argument("--file", type=str, help="Single HDF5 file to visualize")
+    parser.add_argument("--frame", type=int, default=0, help="Frame index (for single mode)")
+    parser.add_argument("--animate", action="store_true", help="Generate MP4 animation")
+    parser.add_argument("--batch", action="store_true", help="Process all files in input_dir")
+    parser.add_argument("--input_dir", default="output", help="Directory with *_stage1.hdf5 files")
+    parser.add_argument("--out_dir", default="viz_output", help="Output directory")
+    parser.add_argument("--limit", type=int, default=0, help="Max files for batch mode (0=all)")
 
     args = parser.parse_args()
 
-    with h5py.File(args.file, "r") as hf:
-        if args.animate:
-            animate_file(hf)
-        else:
-            render_frame(hf, args.frame)
+    if args.batch:
+        os.makedirs(args.out_dir, exist_ok=True)
+        files = sorted([
+            os.path.join(args.input_dir, f)
+            for f in os.listdir(args.input_dir)
+            if f.endswith(".hdf5")
+        ])
+        if args.limit > 0:
+            files = files[:args.limit]
+        print(f"Batch processing {len(files)} files...")
+        for fp in files:
+            process_file(fp, args.out_dir)
+        print("All done.")
+
+    elif args.file:
+        if not os.path.exists(args.file):
+            print(f"File not found: {args.file}")
+            return
+
+        with h5py.File(args.file, "r") as hf:
+            if args.animate:
+                out = args.file.replace(".hdf5", "_hand_object.mp4")
+                save_animation(hf, out)
+            else:
+                out = args.file.replace(".hdf5", f"_frame{args.frame}.png")
+                save_frame_png(hf, args.frame, out)
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
