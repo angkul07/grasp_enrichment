@@ -1,0 +1,553 @@
+2026-04-28 21:21:07.247 | INFO     | __main__:main:577 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-28 21:21:07.358 | INFO     | __main__:main:580 - Device: cuda
+2026-04-28 21:21:07.358 | INFO     | __main__:main:583 - Loading Grounding DINO...
+2026-04-28 21:34:02.919 | INFO     | __main__:main:577 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-28 21:34:03.032 | INFO     | __main__:main:580 - Device: cuda
+2026-04-28 21:34:03.032 | INFO     | __main__:main:583 - Loading Grounding DINO...
+2026-04-28 21:35:12.076 | INFO     | __main__:main:577 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-28 21:35:12.189 | INFO     | __main__:main:580 - Device: cuda
+2026-04-28 21:35:12.189 | INFO     | __main__:main:583 - Loading Grounding DINO...
+2026-04-28 21:36:16.278 | INFO     | __main__:main:577 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-28 21:36:16.393 | INFO     | __main__:main:580 - Device: cuda
+2026-04-28 21:36:16.393 | INFO     | __main__:main:583 - Loading Grounding DINO...
+2026-04-28 21:38:45.201 | INFO     | __main__:main:577 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-28 21:38:45.316 | INFO     | __main__:main:580 - Device: cuda
+2026-04-28 21:38:45.316 | INFO     | __main__:main:583 - Loading Grounding DINO...
+2026-04-28 21:38:51.654 | INFO     | __main__:main:587 - Loading SAM2 VideoPredictor...
+2026-04-28 21:38:55.813 | INFO     | __main__:main:593 - Loading MoGe-2...
+2026-04-28 21:39:03.096 | INFO     | __main__:main:610 - Processing 2 file(s)
+2026-04-28 21:39:03.097 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/0_stage1.hdf5
+2026-04-28 21:39:03.099 | INFO     | __main__:process_video:304 -   Grasped object: 'stapler'
+2026-04-28 21:39:03.138 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-28 21:39:03.138 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-28 21:39:03.139 | INFO     | __main__:process_video:344 -   Extracting 126 frames to output/sam2_frames_g0gf26fs
+2026-04-28 21:39:04.730 | INFO     | __main__:process_video:346 -   Extracted 126 frames
+2026-04-28 21:39:04.752 | INFO     | __main__:process_video:355 -   Running Grounding DINO with prompt: 'stapler'
+2026-04-28 21:39:05.029 | ERROR    | __main__:main:637 -   Failed on output/0_stage1.hdf5: 'Image' object has no attribute 'to'
+2026-04-28 21:39:05.030 | ERROR    | __main__:main:638 - 'Image' object has no attribute 'to'
+Traceback (most recent call last):
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 644, in <module>
+    main()
+    └ <function main at 0x7783773b89d0>
+
+> File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 626, in main
+    process_video(
+    └ <function process_video at 0x7783773b8940>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 356, in process_video
+    boxes, logits, phrases = gd_predict_fn(
+                             └ <function predict at 0x77833f466320>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/util/inference.py", line 65, in predict
+    image = image.to(device)
+            │        └ 'cuda'
+            └ <PIL.Image.Image image mode=RGB size=1920x1080 at 0x77833BFA3F40>
+
+AttributeError: 'Image' object has no attribute 'to'
+2026-04-28 21:39:05.034 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/100_stage1.hdf5
+2026-04-28 21:39:05.036 | INFO     | __main__:process_video:304 -   Grasped object: 'tongs'
+2026-04-28 21:39:05.057 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-28 21:39:05.057 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-28 21:39:05.058 | INFO     | __main__:process_video:344 -   Extracting 217 frames to output/sam2_frames_n5p1gui8
+2026-04-28 21:39:07.712 | INFO     | __main__:process_video:346 -   Extracted 217 frames
+2026-04-28 21:39:07.721 | INFO     | __main__:process_video:355 -   Running Grounding DINO with prompt: 'tongs'
+2026-04-28 21:39:07.749 | ERROR    | __main__:main:637 -   Failed on output/100_stage1.hdf5: 'Image' object has no attribute 'to'
+2026-04-28 21:39:07.749 | ERROR    | __main__:main:638 - 'Image' object has no attribute 'to'
+Traceback (most recent call last):
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 644, in <module>
+    main()
+    └ <function main at 0x7783773b89d0>
+
+> File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 626, in main
+    process_video(
+    └ <function process_video at 0x7783773b8940>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 356, in process_video
+    boxes, logits, phrases = gd_predict_fn(
+                             └ <function predict at 0x77833f466320>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/util/inference.py", line 65, in predict
+    image = image.to(device)
+            │        └ 'cuda'
+            └ <PIL.Image.Image image mode=RGB size=1920x1080 at 0x77833BFA3D90>
+
+AttributeError: 'Image' object has no attribute 'to'
+2026-04-28 21:39:07.752 | INFO     | __main__:main:640 - === Stage 1.2 Pipeline Complete ===
+2026-04-28 21:42:15.900 | INFO     | __main__:main:591 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-28 21:42:16.021 | INFO     | __main__:main:594 - Device: cuda
+2026-04-28 21:42:16.021 | INFO     | __main__:main:597 - Loading Grounding DINO...
+2026-04-28 21:42:21.900 | INFO     | __main__:main:601 - Loading SAM2 VideoPredictor...
+2026-04-28 21:42:25.153 | INFO     | __main__:main:607 - Loading MoGe-2...
+2026-04-28 21:42:31.740 | INFO     | __main__:main:624 - Processing 2 file(s)
+2026-04-28 21:42:31.741 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/0_stage1.hdf5
+2026-04-28 21:42:31.743 | INFO     | __main__:process_video:304 -   Grasped object: 'stapler'
+2026-04-28 21:42:31.779 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-28 21:42:31.779 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-28 21:42:31.780 | INFO     | __main__:process_video:344 -   Extracting 126 frames to output/sam2_frames_bt8d8nyc
+2026-04-28 21:42:33.354 | INFO     | __main__:process_video:346 -   Extracted 126 frames
+2026-04-28 21:42:33.399 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'stapler'
+2026-04-28 21:42:35.311 | ERROR    | __main__:main:651 -   Failed on output/0_stage1.hdf5: name '_C' is not defined
+2026-04-28 21:42:35.312 | ERROR    | __main__:main:652 - name '_C' is not defined
+Traceback (most recent call last):
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 658, in <module>
+    main()
+    └ <function main at 0x7a7c8aec09d0>
+
+> File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 640, in main
+    process_video(
+    └ <function process_video at 0x7a7c8aec0940>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 370, in process_video
+    boxes, logits, phrases = gd_predict_fn(
+                             └ <function predict at 0x7a7c52e66320>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/util/inference.py", line 68, in predict
+    outputs = model(image[None], captions=[caption])
+              │     │                      └ 'stapler.'
+              │     └ tensor([[[ 1.1529,  1.1529,  1.1529,  ..., -0.9534, -0.9534, -0.9534],
+              │                [ 1.1529,  1.1529,  1.1529,  ..., -0.9534, -0...
+              └ GroundingDINO(
+                  (transformer): Transformer(
+                    (encoder): TransformerEncoder(
+                      (layers): ModuleList(
+                        (0-5): 6 ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'captions': ['stapler.']}
+           │    │           └ (tensor([[[[ 1.1529,  1.1529,  1.1529,  ..., -0.9534, -0.9534, -0.9534],
+           │    │                       [ 1.1529,  1.1529,  1.1529,  ..., -0.9534,...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ GroundingDINO(
+               (transformer): Transformer(
+                 (encoder): TransformerEncoder(
+                   (layers): ModuleList(
+                     (0-5): 6 ...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'captions': ['stapler.']}
+           │             └ (tensor([[[[ 1.1529,  1.1529,  1.1529,  ..., -0.9534, -0.9534, -0.9534],
+           │                         [ 1.1529,  1.1529,  1.1529,  ..., -0.9534,...
+           └ <bound method GroundingDINO.forward of GroundingDINO(
+               (transformer): Transformer(
+                 (encoder): TransformerEncoder(
+                   ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/groundingdino.py", line 327, in forward
+    hs, reference, hs_enc, ref_enc, init_box_proposal = self.transformer(
+                                                        └ GroundingDINO(
+                                                            (transformer): Transformer(
+                                                              (encoder): TransformerEncoder(
+                                                                (layers): ModuleList(
+                                                                  (0-5): 6 ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {}
+           │    │           └ ([tensor([[[[-3.5506e-01, -4.7588e-01, -2.7104e-01,  ..., -3.6462e-01,
+           │    │                        -4.4279e-01, -2.7307e-01],
+           │    │                       [-2.93...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ Transformer(
+               (encoder): TransformerEncoder(
+                 (layers): ModuleList(
+                   (0-5): 6 x DeformableTransformerEncoderLayer(
+              ...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {}
+           │             └ ([tensor([[[[-3.5506e-01, -4.7588e-01, -2.7104e-01,  ..., -3.6462e-01,
+           │                          -4.4279e-01, -2.7307e-01],
+           │                         [-2.93...
+           └ <bound method Transformer.forward of Transformer(
+               (encoder): TransformerEncoder(
+                 (layers): ModuleList(
+                   (0-5): 6 x...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/transformer.py", line 258, in forward
+    memory, memory_text = self.encoder(
+                          └ Transformer(
+                              (encoder): TransformerEncoder(
+                                (layers): ModuleList(
+                                  (0-5): 6 x DeformableTransformerEncoderLayer(
+                             ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'pos': tensor([[[ 0.1374,  0.1206,  0.1346,  ...,  0.1637, -0.1789,  0.0784],
+           │    │           │                  [ 0.1374,  0.1206,  0.1346,  ...,  0....
+           │    │           └ (tensor([[[-0.3551,  0.5192, -0.9479,  ..., -0.1795,  0.1092, -0.0694],
+           │    │                      [-0.4759,  0.3837, -1.2380,  ...,  0.4115,  ...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ TransformerEncoder(
+               (layers): ModuleList(
+                 (0-5): 6 x DeformableTransformerEncoderLayer(
+                   (self_attn): MultiScaleDe...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'pos': tensor([[[ 0.1374,  0.1206,  0.1346,  ...,  0.1637, -0.1789,  0.0784],
+           │             │                  [ 0.1374,  0.1206,  0.1346,  ...,  0....
+           │             └ (tensor([[[-0.3551,  0.5192, -0.9479,  ..., -0.1795,  0.1092, -0.0694],
+           │                        [-0.4759,  0.3837, -1.2380,  ...,  0.4115,  ...
+           └ <bound method TransformerEncoder.forward of TransformerEncoder(
+               (layers): ModuleList(
+                 (0-5): 6 x DeformableTransformerE...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/transformer.py", line 576, in forward
+    output = checkpoint.checkpoint(
+             │          └ <function checkpoint at 0x7a7c8b952cb0>
+             └ <module 'torch.utils.checkpoint' from '/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/tor...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/_compile.py", line 54, in inner
+    return disable_fn(*args, **kwargs)
+           │           │       └ {}
+           │           └ (DeformableTransformerEncoderLayer(
+           │               (self_attn): MultiScaleDeformableAttention(
+           │                 (sampling_offsets): Linear(in_features=...
+           └ <function DisableContext.__call__.<locals>._fn at 0x7a7c55f1f250>
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 1304, in _fn
+    return fn(*args, **kwargs)
+           │   │       └ {}
+           │   └ (DeformableTransformerEncoderLayer(
+           │       (self_attn): MultiScaleDeformableAttention(
+           │         (sampling_offsets): Linear(in_features=...
+           └ <function checkpoint at 0x7a7c8b952c20>
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 511, in checkpoint
+    return CheckpointFunction.apply(function, preserve, *args)
+           │                  │     │         │          └ (tensor([[[-0.3665,  0.4026, -0.4874,  ..., -0.1228,  0.3886,  0.0587],
+           │                  │     │         │                     [-0.4212,  0.3734, -0.6145,  ...,  0.1898,  ...
+           │                  │     │         └ True
+           │                  │     └ DeformableTransformerEncoderLayer(
+           │                  │         (self_attn): MultiScaleDeformableAttention(
+           │                  │           (sampling_offsets): Linear(in_features=2...
+           │                  └ <classmethod(<function Function.apply at 0x7a7cffde4280>)>
+           └ <class 'torch.utils.checkpoint.CheckpointFunction'>
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/autograd/function.py", line 625, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+                          │       └ {}
+                          └ (DeformableTransformerEncoderLayer(
+                              (self_attn): MultiScaleDeformableAttention(
+                                (sampling_offsets): Linear(in_features=...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 274, in forward
+    outputs = run_function(*args)
+              │             └ (tensor([[[-0.3665,  0.4026, -0.4874,  ..., -0.1228,  0.3886,  0.0587],
+              │                        [-0.4212,  0.3734, -0.6145,  ...,  0.1898,  ...
+              └ DeformableTransformerEncoderLayer(
+                  (self_attn): MultiScaleDeformableAttention(
+                    (sampling_offsets): Linear(in_features=2...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {}
+           │    │           └ (tensor([[[-0.3665,  0.4026, -0.4874,  ..., -0.1228,  0.3886,  0.0587],
+           │    │                      [-0.4212,  0.3734, -0.6145,  ...,  0.1898,  ...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ DeformableTransformerEncoderLayer(
+               (self_attn): MultiScaleDeformableAttention(
+                 (sampling_offsets): Linear(in_features=2...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {}
+           │             └ (tensor([[[-0.3665,  0.4026, -0.4874,  ..., -0.1228,  0.3886,  0.0587],
+           │                        [-0.4212,  0.3734, -0.6145,  ...,  0.1898,  ...
+           └ <bound method DeformableTransformerEncoderLayer.forward of DeformableTransformerEncoderLayer(
+               (self_attn): MultiScaleDeform...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/transformer.py", line 785, in forward
+    src2 = self.self_attn(
+           └ DeformableTransformerEncoderLayer(
+               (self_attn): MultiScaleDeformableAttention(
+                 (sampling_offsets): Linear(in_features=2...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'query': tensor([[[-0.2291,  0.5232, -0.3528,  ...,  0.0409,  0.2097,  0.1372],
+           │    │           │                  [-0.2838,  0.4939, -0.4799,  ...,  ...
+           │    │           └ ()
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ MultiScaleDeformableAttention(
+               (sampling_offsets): Linear(in_features=256, out_features=256, bias=True)
+               (attention_weight...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'query': tensor([[[-0.2291,  0.5232, -0.3528,  ...,  0.0409,  0.2097,  0.1372],
+           │             │                  [-0.2838,  0.4939, -0.4799,  ...,  ...
+           │             └ ()
+           └ <bound method MultiScaleDeformableAttention.forward of MultiScaleDeformableAttention(
+               (sampling_offsets): Linear(in_feature...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/ms_deform_attn.py", line 338, in forward
+    output = MultiScaleDeformableAttnFunction.apply(
+             │                                └ <classmethod(<function Function.apply at 0x7a7cffde4280>)>
+             └ <class 'grounding_dino.groundingdino.models.GroundingDINO.ms_deform_attn.MultiScaleDeformableAttnFunction'>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/autograd/function.py", line 625, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+                          │       └ {}
+                          └ (tensor([[[[-0.6972, -0.0123, -0.5445,  ...,  0.6997, -0.2911, -0.2255],
+                                      [ 0.2505,  0.5108, -0.7765,  ...,  0.2497,...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/ms_deform_attn.py", line 53, in forward
+    output = _C.ms_deform_attn_forward(
+
+NameError: name '_C' is not defined
+2026-04-28 21:42:36.293 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/100_stage1.hdf5
+2026-04-28 21:42:36.295 | INFO     | __main__:process_video:304 -   Grasped object: 'tongs'
+2026-04-28 21:42:36.331 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-28 21:42:36.332 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-28 21:42:36.332 | INFO     | __main__:process_video:344 -   Extracting 217 frames to output/sam2_frames_2p9q37s_
+2026-04-28 21:42:39.009 | INFO     | __main__:process_video:346 -   Extracted 217 frames
+2026-04-28 21:42:39.049 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'tongs'
+2026-04-28 21:42:39.112 | ERROR    | __main__:main:651 -   Failed on output/100_stage1.hdf5: name '_C' is not defined
+2026-04-28 21:42:39.112 | ERROR    | __main__:main:652 - name '_C' is not defined
+Traceback (most recent call last):
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 658, in <module>
+    main()
+    └ <function main at 0x7a7c8aec09d0>
+
+> File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 640, in main
+    process_video(
+    └ <function process_video at 0x7a7c8aec0940>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/run_stage1_objects.py", line 370, in process_video
+    boxes, logits, phrases = gd_predict_fn(
+                             └ <function predict at 0x7a7c52e66320>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/util/inference.py", line 68, in predict
+    outputs = model(image[None], captions=[caption])
+              │     │                      └ 'tongs.'
+              │     └ tensor([[[ 0.3138,  0.3138,  0.3138,  ...,  0.2624,  0.2624,  0.2624],
+              │                [ 0.3138,  0.3138,  0.3138,  ...,  0.2624,  0...
+              └ GroundingDINO(
+                  (transformer): Transformer(
+                    (encoder): TransformerEncoder(
+                      (layers): ModuleList(
+                        (0-5): 6 ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'captions': ['tongs.']}
+           │    │           └ (tensor([[[[ 0.3138,  0.3138,  0.3138,  ...,  0.2624,  0.2624,  0.2624],
+           │    │                       [ 0.3138,  0.3138,  0.3138,  ...,  0.2624,...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ GroundingDINO(
+               (transformer): Transformer(
+                 (encoder): TransformerEncoder(
+                   (layers): ModuleList(
+                     (0-5): 6 ...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'captions': ['tongs.']}
+           │             └ (tensor([[[[ 0.3138,  0.3138,  0.3138,  ...,  0.2624,  0.2624,  0.2624],
+           │                         [ 0.3138,  0.3138,  0.3138,  ...,  0.2624,...
+           └ <bound method GroundingDINO.forward of GroundingDINO(
+               (transformer): Transformer(
+                 (encoder): TransformerEncoder(
+                   ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/groundingdino.py", line 327, in forward
+    hs, reference, hs_enc, ref_enc, init_box_proposal = self.transformer(
+                                                        └ GroundingDINO(
+                                                            (transformer): Transformer(
+                                                              (encoder): TransformerEncoder(
+                                                                (layers): ModuleList(
+                                                                  (0-5): 6 ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {}
+           │    │           └ ([tensor([[[[-3.5506e-01, -4.7588e-01, -2.7104e-01,  ..., -3.6462e-01,
+           │    │                        -4.4279e-01, -2.7307e-01],
+           │    │                       [-2.93...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ Transformer(
+               (encoder): TransformerEncoder(
+                 (layers): ModuleList(
+                   (0-5): 6 x DeformableTransformerEncoderLayer(
+              ...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {}
+           │             └ ([tensor([[[[-3.5506e-01, -4.7588e-01, -2.7104e-01,  ..., -3.6462e-01,
+           │                          -4.4279e-01, -2.7307e-01],
+           │                         [-2.93...
+           └ <bound method Transformer.forward of Transformer(
+               (encoder): TransformerEncoder(
+                 (layers): ModuleList(
+                   (0-5): 6 x...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/transformer.py", line 258, in forward
+    memory, memory_text = self.encoder(
+                          └ Transformer(
+                              (encoder): TransformerEncoder(
+                                (layers): ModuleList(
+                                  (0-5): 6 x DeformableTransformerEncoderLayer(
+                             ...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'pos': tensor([[[ 0.1374,  0.1206,  0.1346,  ...,  0.1637, -0.1789,  0.0784],
+           │    │           │                  [ 0.1374,  0.1206,  0.1346,  ...,  0....
+           │    │           └ (tensor([[[-0.3551,  0.5192, -0.9479,  ..., -0.1795,  0.1092, -0.0694],
+           │    │                      [-0.4759,  0.3837, -1.2380,  ...,  0.4115,  ...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ TransformerEncoder(
+               (layers): ModuleList(
+                 (0-5): 6 x DeformableTransformerEncoderLayer(
+                   (self_attn): MultiScaleDe...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'pos': tensor([[[ 0.1374,  0.1206,  0.1346,  ...,  0.1637, -0.1789,  0.0784],
+           │             │                  [ 0.1374,  0.1206,  0.1346,  ...,  0....
+           │             └ (tensor([[[-0.3551,  0.5192, -0.9479,  ..., -0.1795,  0.1092, -0.0694],
+           │                        [-0.4759,  0.3837, -1.2380,  ...,  0.4115,  ...
+           └ <bound method TransformerEncoder.forward of TransformerEncoder(
+               (layers): ModuleList(
+                 (0-5): 6 x DeformableTransformerE...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/transformer.py", line 576, in forward
+    output = checkpoint.checkpoint(
+             │          └ <function checkpoint at 0x7a7c8b952cb0>
+             └ <module 'torch.utils.checkpoint' from '/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/tor...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/_compile.py", line 54, in inner
+    return disable_fn(*args, **kwargs)
+           │           │       └ {}
+           │           └ (DeformableTransformerEncoderLayer(
+           │               (self_attn): MultiScaleDeformableAttention(
+           │                 (sampling_offsets): Linear(in_features=...
+           └ <function DisableContext.__call__.<locals>._fn at 0x7a7c55f1f250>
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/_dynamo/eval_frame.py", line 1304, in _fn
+    return fn(*args, **kwargs)
+           │   │       └ {}
+           │   └ (DeformableTransformerEncoderLayer(
+           │       (self_attn): MultiScaleDeformableAttention(
+           │         (sampling_offsets): Linear(in_features=...
+           └ <function checkpoint at 0x7a7c8b952c20>
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 511, in checkpoint
+    return CheckpointFunction.apply(function, preserve, *args)
+           │                  │     │         │          └ (tensor([[[-0.3629,  0.3269, -0.5385,  ..., -0.1322,  0.4208,  0.0951],
+           │                  │     │         │                     [-0.4216,  0.2649, -0.6677,  ...,  0.1801,  ...
+           │                  │     │         └ True
+           │                  │     └ DeformableTransformerEncoderLayer(
+           │                  │         (self_attn): MultiScaleDeformableAttention(
+           │                  │           (sampling_offsets): Linear(in_features=2...
+           │                  └ <classmethod(<function Function.apply at 0x7a7cffde4280>)>
+           └ <class 'torch.utils.checkpoint.CheckpointFunction'>
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/autograd/function.py", line 625, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+                          │       └ {}
+                          └ (DeformableTransformerEncoderLayer(
+                              (self_attn): MultiScaleDeformableAttention(
+                                (sampling_offsets): Linear(in_features=...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/utils/checkpoint.py", line 274, in forward
+    outputs = run_function(*args)
+              │             └ (tensor([[[-0.3629,  0.3269, -0.5385,  ..., -0.1322,  0.4208,  0.0951],
+              │                        [-0.4216,  0.2649, -0.6677,  ...,  0.1801,  ...
+              └ DeformableTransformerEncoderLayer(
+                  (self_attn): MultiScaleDeformableAttention(
+                    (sampling_offsets): Linear(in_features=2...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {}
+           │    │           └ (tensor([[[-0.3629,  0.3269, -0.5385,  ..., -0.1322,  0.4208,  0.0951],
+           │    │                      [-0.4216,  0.2649, -0.6677,  ...,  0.1801,  ...
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ DeformableTransformerEncoderLayer(
+               (self_attn): MultiScaleDeformableAttention(
+                 (sampling_offsets): Linear(in_features=2...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {}
+           │             └ (tensor([[[-0.3629,  0.3269, -0.5385,  ..., -0.1322,  0.4208,  0.0951],
+           │                        [-0.4216,  0.2649, -0.6677,  ...,  0.1801,  ...
+           └ <bound method DeformableTransformerEncoderLayer.forward of DeformableTransformerEncoderLayer(
+               (self_attn): MultiScaleDeform...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/transformer.py", line 785, in forward
+    src2 = self.self_attn(
+           └ DeformableTransformerEncoderLayer(
+               (self_attn): MultiScaleDeformableAttention(
+                 (sampling_offsets): Linear(in_features=2...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1778, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           │    │           │       └ {'query': tensor([[[-0.2255,  0.4475, -0.4039,  ...,  0.0315,  0.2419,  0.1735],
+           │    │           │                  [-0.2841,  0.3855, -0.5331,  ...,  ...
+           │    │           └ ()
+           │    └ <function Module._call_impl at 0x7a7d119681f0>
+           └ MultiScaleDeformableAttention(
+               (sampling_offsets): Linear(in_features=256, out_features=256, bias=True)
+               (attention_weight...
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1789, in _call_impl
+    return forward_call(*args, **kwargs)
+           │             │       └ {'query': tensor([[[-0.2255,  0.4475, -0.4039,  ...,  0.0315,  0.2419,  0.1735],
+           │             │                  [-0.2841,  0.3855, -0.5331,  ...,  ...
+           │             └ ()
+           └ <bound method MultiScaleDeformableAttention.forward of MultiScaleDeformableAttention(
+               (sampling_offsets): Linear(in_feature...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/ms_deform_attn.py", line 338, in forward
+    output = MultiScaleDeformableAttnFunction.apply(
+             │                                └ <classmethod(<function Function.apply at 0x7a7cffde4280>)>
+             └ <class 'grounding_dino.groundingdino.models.GroundingDINO.ms_deform_attn.MultiScaleDeformableAttnFunction'>
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/.venv/lib/python3.10/site-packages/torch/autograd/function.py", line 625, in apply
+    return super().apply(*args, **kwargs)  # type: ignore[misc]
+                          │       └ {}
+                          └ (tensor([[[[-0.6633, -0.0216, -0.7295,  ...,  0.6727, -0.3544, -0.2023],
+                                      [ 0.1034,  0.4190, -0.6326,  ...,  0.0622,...
+
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/Grounded-SAM-2/grounding_dino/groundingdino/models/GroundingDINO/ms_deform_attn.py", line 53, in forward
+    output = _C.ms_deform_attn_forward(
+
+NameError: name '_C' is not defined
+2026-04-28 21:42:40.131 | INFO     | __main__:main:654 - === Stage 1.2 Pipeline Complete ===
+2026-04-28 21:44:46.716 | INFO     | __main__:main:591 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-28 21:44:46.838 | INFO     | __main__:main:594 - Device: cuda
+2026-04-28 21:44:46.838 | INFO     | __main__:main:597 - Loading Grounding DINO...
+2026-04-28 21:44:52.307 | INFO     | __main__:main:601 - Loading SAM2 VideoPredictor...
+2026-04-28 21:44:55.545 | INFO     | __main__:main:607 - Loading MoGe-2...
+2026-04-28 21:45:02.448 | INFO     | __main__:main:624 - Processing 2 file(s)
+2026-04-28 21:45:02.449 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/0_stage1.hdf5
+2026-04-28 21:45:02.451 | INFO     | __main__:process_video:304 -   Grasped object: 'stapler'
+2026-04-28 21:45:02.488 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-28 21:45:02.489 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-28 21:45:02.489 | INFO     | __main__:process_video:344 -   Extracting 126 frames to output/sam2_frames_rqj1ahwa
+2026-04-28 21:45:04.068 | INFO     | __main__:process_video:346 -   Extracted 126 frames
+2026-04-28 21:45:04.112 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'stapler'
+2026-04-28 21:45:05.133 | INFO     | __main__:process_video:402 -   Detected 'stapler' (conf=0.408), box=[0.7162607312202454, 0.8420023918151855, 0.1890936940908432, 0.3132643401622772]
+2026-04-28 21:45:05.133 | INFO     | __main__:process_video:416 -   Initializing SAM2 VideoPredictor...
+2026-04-28 21:45:12.791 | INFO     | __main__:process_video:428 -   Propagating SAM2 masks...
+2026-04-28 21:46:01.516 | INFO     | __main__:process_video:437 -   SAM2 tracked object across 126 frames
+2026-04-28 21:46:01.518 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
+2026-04-28 21:49:56.874 | SUCCESS  | __main__:process_video:533 -   Done: object data appended to output/0_stage1.hdf5
+2026-04-28 21:49:56.880 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/100_stage1.hdf5
+2026-04-28 21:49:56.881 | INFO     | __main__:process_video:304 -   Grasped object: 'tongs'
+2026-04-28 21:49:56.903 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-28 21:49:56.903 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-28 21:49:56.904 | INFO     | __main__:process_video:344 -   Extracting 217 frames to output/sam2_frames_ehxdncg7
+2026-04-28 21:49:59.531 | INFO     | __main__:process_video:346 -   Extracted 217 frames
+2026-04-28 21:49:59.571 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'tongs'
+2026-04-28 21:49:59.892 | INFO     | __main__:process_video:402 -   Detected 'tongs' (conf=0.526), box=[0.678970456123352, 0.5627419352531433, 0.07271841913461685, 0.20029586553573608]
+2026-04-28 21:49:59.893 | INFO     | __main__:process_video:416 -   Initializing SAM2 VideoPredictor...
+2026-04-28 21:50:12.888 | INFO     | __main__:process_video:428 -   Propagating SAM2 masks...
+2026-04-28 21:51:39.328 | INFO     | __main__:process_video:437 -   SAM2 tracked object across 217 frames
+2026-04-28 21:51:39.331 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
+2026-04-28 21:57:19.319 | SUCCESS  | __main__:process_video:533 -   Done: object data appended to output/100_stage1.hdf5
+2026-04-28 21:57:19.334 | INFO     | __main__:main:654 - === Stage 1.2 Pipeline Complete ===

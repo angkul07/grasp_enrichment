@@ -80,11 +80,8 @@ if [ ! -d "third_party/Grounded-SAM-2" ]; then
     git clone https://github.com/IDEA-Research/Grounded-SAM-2.git third_party/Grounded-SAM-2
 fi
 
-echo "Installing SAM2..."
-uv pip install -e ./third_party/Grounded-SAM-2/sam2
-
-echo "Installing Grounding DINO..."
-uv pip install -e ./third_party/Grounded-SAM-2/grounding_dino
+echo "Installing Grounded-SAM-2 package..."
+uv pip install -e ./third_party/Grounded-SAM-2
 
 echo "Downloading SAM2 checkpoint..."
 mkdir -p third_party/Grounded-SAM-2/checkpoints

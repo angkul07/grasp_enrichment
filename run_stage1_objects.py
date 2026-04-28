@@ -347,15 +347,29 @@ def process_video(
 
     try:
         # -- 3. Grounding DINO: detect object on frame 0 --
-        from PIL import Image as PILImage
+        # from PIL import Image as PILImage
+
+        # frame0_path = os.path.join(frame_dir, "000000.jpg")
+        # frame0_pil = PILImage.open(frame0_path).convert("RGB")
+
+ 
+        # boxes, logits, phrases = gd_predict_fn(
+        #     model=gd_model,
+        #     image=frame0_pil,
+        #     caption=object_name,
+        #     box_threshold=GD_BOX_THRESHOLD,
+        #     text_threshold=GD_TEXT_THRESHOLD,
+        # )
+
+        from groundingdino.util.inference import load_image
 
         frame0_path = os.path.join(frame_dir, "000000.jpg")
-        frame0_pil = PILImage.open(frame0_path).convert("RGB")
+        image_source, image_tensor = load_image(frame0_path)
 
         logger.info(f"  Running Grounding DINO with prompt: '{object_name}'")
         boxes, logits, phrases = gd_predict_fn(
             model=gd_model,
-            image=frame0_pil,
+            image=image_tensor,
             caption=object_name,
             box_threshold=GD_BOX_THRESHOLD,
             text_threshold=GD_TEXT_THRESHOLD,
