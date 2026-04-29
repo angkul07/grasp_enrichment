@@ -159,6 +159,10 @@ class Stage1Pipeline:
         verts_list = []
         cam_t_list = []
         right_list = []
+        # --- ADD THESE THREE LINES ---
+        global_orient_list = []
+        hand_pose_list =[]
+        betas_list =[]
 
         for batch in dataloader:
             batch = recursive_to(batch, self.device)
@@ -194,7 +198,13 @@ class Stage1Pipeline:
                 cam_t_list.append(cam_t_full[i])
                 right_list.append(float(is_r))
 
-        return verts_list, cam_t_list, right_list
+                # --- ADD THESE THREE LINES ---
+                global_orient_list.append(out['pred_mano_params']['global_orient'][i].detach().cpu().numpy())
+                hand_pose_list.append(out['pred_mano_params']['hand_pose'][i].detach().cpu().numpy())
+                betas_list.append(out['pred_mano_params']['betas'][i].detach().cpu().numpy())
+
+        return verts_list, cam_t_list, right_list, global_orient_list, hand_pose_list, betas_list
+        
 
     # ------------------------------ per-video ------------------------------
     def process_video(self, video_path: str):
@@ -220,6 +230,9 @@ class Stage1Pipeline:
         all_verts    = []   # list[list[ndarray(778,3)]]
         all_cam_t    = []   # list[list[ndarray(3,)]]
         all_is_right = []   # list[list[float]]
+        all_global_orient = []
+        all_hand_pose = []
+        all_betas = []
         frames_with_hands = 0
 
         pbar = tqdm(total=frame_count, desc=f"[HaMeR] {basename}")
@@ -242,10 +255,14 @@ class Stage1Pipeline:
                 logger.debug(f"Frame {frame_idx}: no hands detected")
             else:
                 # Step 2: run HaMeR on detected hands
-                verts, cam_t, right = self._run_hamer_on_frame(frame, boxes, is_right)
+                verts, cam_t, right, g_orient, h_pose, betas = self._run_hamer_on_frame(frame, boxes, is_right)
                 all_verts.append(verts)
                 all_cam_t.append(cam_t)
                 all_is_right.append(right)
+                # --- ADD THESE ---
+                all_global_orient.append(g_orient)
+                all_hand_pose.append(h_pose)
+                all_betas.append(betas)
                 frames_with_hands += 1
                 logger.debug(f"Frame {frame_idx}: {len(verts)} hand(s) recovered")
 
@@ -278,6 +295,9 @@ class Stage1Pipeline:
                     grp.create_dataset(
                         'is_right', data=np.array(all_is_right[fidx]),
                     )  # (N_hands,)
+                    grp.create_dataset('global_orient', data=np.stack(all_global_orient[fidx]), compression='gzip')
+                    grp.create_dataset('hand_pose', data=np.stack(all_hand_pose[fidx]), compression='gzip')
+                    grp.create_dataset('betas', data=np.stack(all_betas[fidx]), compression='gzip')
 
         logger.success(f"Done → {out_path}")
 

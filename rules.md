@@ -7,7 +7,7 @@
 
 ./.venv/bin/python run_stage1.py --input_dir basic_pick_place --output_dir output --limit 25
 ./.venv/bin/pip install "numpy==1.23.5"
-./.venv/bin/python run_stage1_objects.py --limit 1
+./.venv/bin/python run_stage1_objects.py --limit 2
 ./.venv/bin/python visualize.py --limit 2
 ./.venv/bin/python visualize_obj.py --file output/0_stage1.hdf5 --frame 0
 ./.venv/bin/python visualize_obj.py --file output/0_stage1.hdf5 --animate
