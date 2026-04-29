@@ -97,6 +97,16 @@ if [ ! -f "third_party/Grounded-SAM-2/gdino_checkpoints/groundingdino_swint_ogc.
         https://github.com/IDEA-Research/GroundingDINO/releases/download/v0.1.0-alpha/groundingdino_swint_ogc.pth
 fi
 
+# 1. Install PyTorch3D
+uv pip install "git+https://github.com/facebookresearch/pytorch3d.git"
+
+# 2. Install manopth
+uv pip install "git+https://github.com/hassony2/manopth.git"
+
+# 3. Clone ContactOpt and install its basic requirements
+git clone https://github.com/facebookresearch/contactopt.git third_party/contactopt
+uv pip install scipy tensorboardX
+
 # ── 9. Fetch HaMeR demo data (checkpoint + MANO mean params) ────────────
 echo "Fetching HaMeR model checkpoint..."
 cd third_party/hamer

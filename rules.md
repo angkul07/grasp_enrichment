@@ -12,3 +12,4 @@
 ./.venv/bin/python visualize_obj.py --file output/0_stage1.hdf5 --frame 0
 ./.venv/bin/python visualize_obj.py --file output/0_stage1.hdf5 --animate
 ./.venv/bin/python visualize_obj.py --batch --input_dir output --out_dir viz_output --animate --frame 0
+./.venv/bin/python run_stage1_contactopt.py

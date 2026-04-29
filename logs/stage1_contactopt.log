@@ -1,0 +1,135 @@
+2026-04-29 16:21:32.799 | ERROR    | __main__:main:111 - No H5 files found in output/
+2026-04-29 16:21:59.812 | INFO     | __main__:process_h5:70 - Processing output/0_stage1.hdf5
+2026-04-29 16:22:00.718 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:01.539 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:02.407 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:03.302 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:04.170 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:05.041 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:05.865 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:06.786 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:07.645 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:08.529 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:09.403 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:10.271 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:11.147 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:12.022 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:12.818 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:13.710 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:14.597 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:15.414 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:16.281 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:17.174 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:18.041 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:22:18.848 | ERROR    | __main__:run_contactopt:62 - Traceback (most recent call last):
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+ModuleNotFoundError: No module named 'contactopt'
+
+2026-04-29 16:26:31.076 | INFO     | __main__:process_h5:69 - Processing output/0_stage1.hdf5
+2026-04-29 16:26:35.003 | ERROR    | __main__:run_contactopt:61 - Traceback (most recent call last):
+  File "/system/conda/miniconda3/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/system/conda/miniconda3/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/util.py", line 13, in <module>
+    import open3d
+ModuleNotFoundError: No module named 'open3d'
+
+2026-04-29 16:26:38.986 | ERROR    | __main__:run_contactopt:61 - Traceback (most recent call last):
+  File "/system/conda/miniconda3/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/runpy.py", line 196, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/system/conda/miniconda3/uv/python/cpython-3.10-linux-x86_64-gnu/lib/python3.10/runpy.py", line 86, in _run_code
+    exec(code, run_globals)
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/run_user_demo.py", line 8, in <module>
+    import contactopt.util as util
+  File "/teamspace/studios/this_studio/grasp_enrichment/third_party/contactopt/contactopt/util.py", line 13, in <module>
+    import open3d
+ModuleNotFoundError: No module named 'open3d'
+

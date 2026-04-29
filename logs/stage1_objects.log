@@ -677,3 +677,40 @@ Processing: output/1_stage1.hdf5
 2026-04-29 14:09:37.151 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
 2026-04-29 14:10:22.015 | SUCCESS  | __main__:process_video:534 -   Done: object data appended to output/1_stage1.hdf5
 2026-04-29 14:10:22.020 | INFO     | __main__:main:655 - === Stage 1.2 Pipeline Complete ===
+2026-04-29 14:57:36.137 | INFO     | __main__:main:592 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-29 14:57:36.264 | INFO     | __main__:main:595 - Device: cuda
+2026-04-29 14:57:36.264 | INFO     | __main__:main:598 - Loading Grounding DINO...
+2026-04-29 14:57:42.293 | INFO     | __main__:main:602 - Loading SAM2 VideoPredictor...
+2026-04-29 14:57:45.738 | INFO     | __main__:main:608 - Loading MoGe-2...
+2026-04-29 14:57:52.938 | INFO     | __main__:main:625 - Processing 2 file(s)
+2026-04-29 14:57:52.938 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/0_stage1.hdf5
+2026-04-29 14:57:52.941 | INFO     | __main__:process_video:304 -   Grasped object: 'stapler'
+2026-04-29 14:57:52.979 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-29 14:57:52.980 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-29 14:57:52.980 | INFO     | __main__:process_video:344 -   Extracting 126 frames to output/sam2_frames_zwzs0dhu
+2026-04-29 14:57:54.498 | INFO     | __main__:process_video:346 -   Extracted 126 frames
+2026-04-29 14:57:54.545 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'stapler'
+2026-04-29 14:57:55.581 | INFO     | __main__:process_video:402 -   Detected 'stapler' (conf=0.408), box=[0.7162607312202454, 0.8420023918151855, 0.1890936940908432, 0.3132643401622772]
+2026-04-29 14:57:55.581 | INFO     | __main__:process_video:416 -   Initializing SAM2 VideoPredictor...
+2026-04-29 14:58:03.753 | INFO     | __main__:process_video:428 -   Propagating SAM2 masks...
+2026-04-29 14:58:52.909 | INFO     | __main__:process_video:437 -   SAM2 tracked object across 126 frames
+2026-04-29 14:58:52.911 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
+2026-04-29 14:59:28.090 | SUCCESS  | __main__:process_video:534 -   Done: object data appended to output/0_stage1.hdf5
+2026-04-29 14:59:28.098 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/1_stage1.hdf5
+2026-04-29 14:59:28.100 | INFO     | __main__:process_video:304 -   Grasped object: 'iphone'
+2026-04-29 14:59:28.121 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-29 14:59:28.121 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-29 14:59:28.122 | INFO     | __main__:process_video:344 -   Extracting 160 frames to output/sam2_frames_y00r_kiq
+2026-04-29 14:59:30.103 | INFO     | __main__:process_video:346 -   Extracted 160 frames
+2026-04-29 14:59:30.157 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'iphone'
+2026-04-29 14:59:30.483 | INFO     | __main__:process_video:402 -   Detected 'iphone' (conf=0.378), box=[0.45912081003189087, 0.9068633913993835, 0.13694898784160614, 0.1837027221918106]
+2026-04-29 14:59:30.484 | INFO     | __main__:process_video:416 -   Initializing SAM2 VideoPredictor...
+2026-04-29 14:59:40.817 | INFO     | __main__:process_video:428 -   Propagating SAM2 masks...
+2026-04-29 15:00:44.823 | INFO     | __main__:process_video:437 -   SAM2 tracked object across 160 frames
+2026-04-29 15:00:44.825 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
+2026-04-29 15:01:28.598 | SUCCESS  | __main__:process_video:534 -   Done: object data appended to output/1_stage1.hdf5
+2026-04-29 15:01:28.611 | INFO     | __main__:main:655 - === Stage 1.2 Pipeline Complete ===
