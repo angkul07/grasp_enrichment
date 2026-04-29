@@ -81,12 +81,22 @@ COLORS = ["red", "blue", "green", "orange"]
 # --------------------------------------------------
 # Render a single frame
 # --------------------------------------------------
-def render_frame(fig, grp, frame_idx, object_name=""):
+def render_frame(fig, grp, frame_idx, object_name="", is_anim=False):
     """Render one frame with overview + per-hand zoomed subplots."""
     fig.clear()
 
     hands, sides = load_hands(grp)
     obj_pts = load_object(grp)
+    
+    # SPEED OPTIMIZATION: Subsample points drastically if making a video.
+    # Matplotlib 3D scatter is very slow with thousands of points per frame.
+    if is_anim:
+        hands = [h[::2] for h in hands]  # Reduce hand points by half
+        if obj_pts is not None and len(obj_pts) > 500:
+            # Deterministic subsample to ~500 points to prevent flickering
+            step = len(obj_pts) // 500 + 1
+            obj_pts = obj_pts[::step]
+
     n_hands = len(hands)
 
     if n_hands == 0 and obj_pts is None:
@@ -98,20 +108,20 @@ def render_frame(fig, grp, frame_idx, object_name=""):
 
     # Layout: [overview] [hand0_zoom] [hand1_zoom] ...
     n_cols = 1 + n_hands
-    axes = []
+    axes =[]
 
     # -- Overview subplot --
     ax_ov = fig.add_subplot(1, n_cols, 1, projection="3d")
-    all_pts = []
+    all_pts =[]
 
     for i, hand in enumerate(hands):
         ax_ov.scatter(hand[:, 0], hand[:, 1], hand[:, 2],
-                      s=0.5, alpha=0.3, c=COLORS[i % len(COLORS)])
+                      s=0.5 if not is_anim else 1, alpha=0.3, c=COLORS[i % len(COLORS)])
         all_pts.append(hand)
 
     if obj_pts is not None:
         ax_ov.scatter(obj_pts[:, 0], obj_pts[:, 1], obj_pts[:, 2],
-                      s=2, alpha=0.6, c="green", marker="^")
+                      s=2 if not is_anim else 4, alpha=0.6, c="green", marker="^")
         all_pts.append(obj_pts)
 
     if all_pts:
@@ -130,7 +140,7 @@ def render_frame(fig, grp, frame_idx, object_name=""):
 
         # Hand vertices
         ax.scatter(hand[:, 0], hand[:, 1], hand[:, 2],
-                   s=2, alpha=0.6, c=color, label=f"{sides[i]} hand")
+                   s=2 if not is_anim else 4, alpha=0.6, c=color, label=f"{sides[i]} hand")
 
         # Object overlay (only points near this hand's Z range for clarity)
         if obj_pts is not None:
@@ -145,7 +155,7 @@ def render_frame(fig, grp, frame_idx, object_name=""):
 
             if len(nearby) > 0:
                 ax.scatter(nearby[:, 0], nearby[:, 1], nearby[:, 2],
-                           s=3, alpha=0.5, c="green", marker="^",
+                           s=3 if not is_anim else 6, alpha=0.5, c="green", marker="^",
                            label=f"Object ({len(nearby)} pts)")
 
                 # Zoom to include both hand and nearby object
@@ -187,7 +197,7 @@ def save_frame_png(hf, frame_idx, out_path):
     width = 7 * (1 + max(n_hands, 1))
 
     fig = plt.figure(figsize=(width, 7))
-    render_frame(fig, hf[grp_name], frame_idx, object_name)
+    render_frame(fig, hf[grp_name], frame_idx, object_name, is_anim=False)
     plt.savefig(out_path, dpi=200, bbox_inches="tight")
     plt.close()
     print(f"Saved: {out_path}")
@@ -205,7 +215,8 @@ def save_animation(hf, out_path):
     def update(fidx):
         grp_name = f"frame_{fidx:06d}"
         if grp_name in hf:
-            render_frame(fig, hf[grp_name], fidx, object_name)
+            # Pass is_anim=True to trigger the speed optimizations
+            render_frame(fig, hf[grp_name], fidx, object_name, is_anim=True)
 
     anim = FuncAnimation(fig, update, frames=total, interval=100)
     writer = FFMpegWriter(fps=10, bitrate=2400)
@@ -270,13 +281,19 @@ def main():
             print(f"File not found: {args.file}")
             return
 
+        # FIXED: Ensure single file mode saves correctly inside out_dir
+        base = os.path.splitext(os.path.basename(args.file))[0]
+        save_dir = os.path.join(args.out_dir, base)
+        os.makedirs(save_dir, exist_ok=True)
+
         with h5py.File(args.file, "r") as hf:
             if args.animate:
-                out = args.file.replace(".hdf5", "_hand_object.mp4")
+                out = os.path.join(save_dir, f"{base}_hand_object.mp4")
                 save_animation(hf, out)
             else:
-                out = args.file.replace(".hdf5", f"_frame{args.frame}.png")
+                out = os.path.join(save_dir, f"{base}_frame{args.frame}.png")
                 save_frame_png(hf, args.frame, out)
+        print(f"Done -> {save_dir}")
     else:
         parser.print_help()
 
