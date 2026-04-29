@@ -551,3 +551,47 @@ Processing: output/100_stage1.hdf5
 2026-04-28 21:51:39.331 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
 2026-04-28 21:57:19.319 | SUCCESS  | __main__:process_video:533 -   Done: object data appended to output/100_stage1.hdf5
 2026-04-28 21:57:19.334 | INFO     | __main__:main:654 - === Stage 1.2 Pipeline Complete ===
+2026-04-29 12:40:17.294 | INFO     | __main__:main:592 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-29 12:40:17.424 | INFO     | __main__:main:595 - Device: cuda
+2026-04-29 12:40:17.424 | INFO     | __main__:main:598 - Loading Grounding DINO...
+2026-04-29 12:40:24.796 | INFO     | __main__:main:602 - Loading SAM2 VideoPredictor...
+2026-04-29 12:40:28.814 | INFO     | __main__:main:608 - Loading MoGe-2...
+2026-04-29 12:40:37.250 | INFO     | __main__:main:625 - Processing 1 file(s)
+2026-04-29 12:40:37.251 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/0_stage1.hdf5
+2026-04-29 12:40:37.254 | INFO     | __main__:process_video:304 -   Grasped object: 'stapler'
+2026-04-29 12:40:37.292 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-29 12:40:37.293 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-29 12:40:37.293 | INFO     | __main__:process_video:344 -   Extracting 126 frames to output/sam2_frames_x6o4mgyt
+2026-04-29 12:40:38.881 | INFO     | __main__:process_video:346 -   Extracted 126 frames
+2026-04-29 12:40:38.930 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'stapler'
+2026-04-29 12:40:40.165 | INFO     | __main__:process_video:402 -   Detected 'stapler' (conf=0.408), box=[0.7162607312202454, 0.8420023918151855, 0.1890936940908432, 0.3132643401622772]
+2026-04-29 12:40:40.166 | INFO     | __main__:process_video:416 -   Initializing SAM2 VideoPredictor...
+2026-04-29 12:40:48.368 | INFO     | __main__:process_video:428 -   Propagating SAM2 masks...
+2026-04-29 12:41:36.883 | INFO     | __main__:process_video:437 -   SAM2 tracked object across 126 frames
+2026-04-29 12:41:36.885 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
+2026-04-29 12:42:13.309 | SUCCESS  | __main__:process_video:534 -   Done: object data appended to output/0_stage1.hdf5
+2026-04-29 12:42:13.314 | INFO     | __main__:main:655 - === Stage 1.2 Pipeline Complete ===
+2026-04-29 12:43:42.329 | INFO     | __main__:main:592 - === Starting Stage 1.2 — Object Reconstruction ===
+2026-04-29 12:43:42.454 | INFO     | __main__:main:595 - Device: cuda
+2026-04-29 12:43:42.454 | INFO     | __main__:main:598 - Loading Grounding DINO...
+2026-04-29 12:43:48.509 | INFO     | __main__:main:602 - Loading SAM2 VideoPredictor...
+2026-04-29 12:43:51.889 | INFO     | __main__:main:608 - Loading MoGe-2...
+2026-04-29 12:43:59.296 | INFO     | __main__:main:625 - Processing 1 file(s)
+2026-04-29 12:43:59.296 | INFO     | __main__:process_video:300 - 
+============================================================
+Processing: output/0_stage1.hdf5
+2026-04-29 12:43:59.299 | INFO     | __main__:process_video:304 -   Grasped object: 'stapler'
+2026-04-29 12:43:59.337 | INFO     | __main__:process_video:336 -   Resolution: 1920x1080
+2026-04-29 12:43:59.337 | INFO     | __main__:process_video:337 -   FOV_x: 105.00°, scaled_focal: 42857.1
+2026-04-29 12:43:59.337 | INFO     | __main__:process_video:344 -   Extracting 126 frames to output/sam2_frames_r1c4ttz5
+2026-04-29 12:44:01.045 | INFO     | __main__:process_video:346 -   Extracted 126 frames
+2026-04-29 12:44:01.103 | INFO     | __main__:process_video:369 -   Running Grounding DINO with prompt: 'stapler'
+2026-04-29 12:44:02.162 | INFO     | __main__:process_video:402 -   Detected 'stapler' (conf=0.408), box=[0.7162607312202454, 0.8420023918151855, 0.1890936940908432, 0.3132643401622772]
+2026-04-29 12:44:02.162 | INFO     | __main__:process_video:416 -   Initializing SAM2 VideoPredictor...
+2026-04-29 12:44:10.556 | INFO     | __main__:process_video:428 -   Propagating SAM2 masks...
+2026-04-29 12:44:59.419 | INFO     | __main__:process_video:437 -   SAM2 tracked object across 126 frames
+2026-04-29 12:44:59.421 | INFO     | __main__:process_video:443 -   Running MoGe-2 depth extraction + back-projection...
+2026-04-29 12:44:59.794 | SUCCESS  | __main__:process_video:534 -   Done: object data appended to output/0_stage1.hdf5
+2026-04-29 12:44:59.802 | INFO     | __main__:main:655 - === Stage 1.2 Pipeline Complete ===

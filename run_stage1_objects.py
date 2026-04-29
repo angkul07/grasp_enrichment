@@ -159,49 +159,44 @@ def compute_depth_scale_factor(
     moge_depth: np.ndarray,
     cam_t_arr: np.ndarray,
     vertices: np.ndarray,
-    is_right: np.ndarray,
     scaled_focal: float,
     W: int,
     H: int,
 ) -> float:
     """
-    Compute the scale factor that aligns MoGe-2 depth to HaMeR depth.
-
-    Strategy: for each detected hand, project the wrist (vertex 0) to pixel
-    coords, sample MoGe depth there, compare with HaMeR's cam_t Z.
-    Average over all hands for robustness.
-
-    Returns scale s such that: hamer_Z ≈ s * moge_depth
+    Compute the scale factor aligning MoGe-2 depth to HaMeR depth.
+    Uses the median scale across all 778 hand vertices for extreme robustness.
     """
     scales = []
-
+    
     for i in range(cam_t_arr.shape[0]):
-        # HaMeR wrist depth
-        hamer_z = float(cam_t_arr[i, 2])
-
-        # Project wrist to pixel
-        wrist = vertices[i, 0, :]  # vertex 0 is the wrist
-        is_r = int(is_right[i])
-        wrist_x = (2 * is_r - 1) * wrist[0]  # undo x-mirror
-        wrist_cam = np.array([wrist_x, wrist[1], wrist[2]]) + cam_t_arr[i]
-
-        px = int(np.clip(
-            wrist_cam[0] / wrist_cam[2] * scaled_focal + W / 2, 0, W - 1
-        ))
-        py = int(np.clip(
-            wrist_cam[1] / wrist_cam[2] * scaled_focal + H / 2, 0, H - 1
-        ))
-
-        moge_z = float(moge_depth[py, px])
-        if moge_z > 1e-6:
-            scales.append(hamer_z / moge_z)
+        # Vertices are already unmirrored in the HDF5, just add translation
+        verts_cam = vertices[i] + cam_t_arr[i]
+        
+        # Project all 778 vertices to 2D image space
+        xs = (verts_cam[:, 0] / verts_cam[:, 2]) * scaled_focal + W / 2.0
+        ys = (verts_cam[:, 1] / verts_cam[:, 2]) * scaled_focal + H / 2.0
+        
+        valid_mask = (xs >= 0) & (xs < W) & (ys >= 0) & (ys < H)
+        xs, ys = xs[valid_mask].astype(int), ys[valid_mask].astype(int)
+        
+        if len(xs) == 0:
+            continue
+            
+        moge_zs = moge_depth[ys, xs]
+        hamer_zs = verts_cam[valid_mask, 2]
+        
+        # Filter valid MoGe depths
+        valid_depth = moge_zs > 1e-3
+        if valid_depth.any():
+            hand_scales = hamer_zs[valid_depth] / moge_zs[valid_depth]
+            scales.append(np.median(hand_scales))
 
     if not scales:
-        logger.warning("Could not compute depth scale — no valid hand depth samples.")
+        logger.warning("Could not compute depth scale from hands. Defaulting to 1.0.")
         return 1.0
 
-    scale = float(np.median(scales))
-    return scale
+    return float(np.median(scales))
 
 
 def backproject_mask_to_hamer_space(
@@ -211,43 +206,48 @@ def backproject_mask_to_hamer_space(
     scaled_focal: float,
     W: int,
     H: int,
+    hand_z_center: float = None
 ) -> np.ndarray:
     """
-    Back-project object mask pixels into HaMeR camera space using
-    MoGe-2 depth (scale-aligned) and HaMeR's camera intrinsics.
-
-    Args:
-        mask:         (H, W) bool — SAM2 object mask
-        moge_depth:   (H, W) float — MoGe-2 depth map
-        scale_factor: float — s such that hamer_Z ≈ s * moge_Z
-        scaled_focal: float — HaMeR's scaled focal length
-        W, H:         image dimensions
-
-    Returns:
-        points_3d: (N, 3) float32 — 3D points in HaMeR camera space
+    Back-project object mask pixels, filtering out background bleed.
     """
-    # Get pixel coordinates of mask
     ys, xs = np.where(mask)
-
     if len(ys) == 0:
         return np.zeros((0, 3), dtype=np.float32)
 
-    # MoGe depth at mask pixels, scaled to HaMeR space
     Z = moge_depth[ys, xs].astype(np.float64) * scale_factor
-
-    # Filter out invalid depth
     valid = Z > 1e-3
     xs, ys, Z = xs[valid], ys[valid], Z[valid]
 
     if len(Z) == 0:
         return np.zeros((0, 3), dtype=np.float32)
 
-    # Back-project using HaMeR's pinhole model
-    # (principal point at image center, same as cam_crop_to_full)
     X = (xs.astype(np.float64) - W / 2.0) * Z / scaled_focal
     Y = (ys.astype(np.float64) - H / 2.0) * Z / scaled_focal
 
     points = np.stack([X, Y, Z], axis=-1).astype(np.float32)
+
+    # --- FILTERING OUTLIERS (Crucial for ContactOpt) ---
+    
+    # 1. Depth filtering (removes table/background bleed)
+    if hand_z_center is not None:
+        # Keep object points within 30cm of the hand's Z-depth
+        depth_mask = np.abs(points[:, 2] - hand_z_center) < 0.3
+        points = points[depth_mask]
+    else:
+        # Fallback if no hands are in frame
+        if len(points) > 0:
+            med_z = np.median(points[:, 2])
+            depth_mask = np.abs(points[:, 2] - med_z) < 0.2
+            points = points[depth_mask]
+
+    # 2. Spatial filtering (removes isolated floating pixels)
+    if len(points) > 10:
+        center = np.median(points, axis=0)
+        dist = np.linalg.norm(points - center, axis=1)
+        # Keep points within a 40cm radius sphere
+        points = points[dist < 0.4]
+
     return points
 
 
@@ -491,20 +491,21 @@ def process_video(
                 if n_hands > 0:
                     vertices = grp["vertices"][:]
                     cam_t_arr = grp["cam_t"][:]
-                    is_right = grp["is_right"][:]
 
                     scale_factor = compute_depth_scale_factor(
-                        depth, cam_t_arr, vertices, is_right,
+                        depth, cam_t_arr, vertices,
                         scaled_focal, W_vid, H_vid,
                     )
+                    # Get the median depth of the hands for filtering
+                    hand_z_center = float(np.median(cam_t_arr[:, 2]))
                 else:
-                    # No hands detected — use scale=1.0 (best effort)
                     scale_factor = 1.0
+                    hand_z_center = None
 
                 # -- Back-project object mask to HaMeR camera space --
                 obj_points = backproject_mask_to_hamer_space(
                     mask, depth, scale_factor,
-                    scaled_focal, W_vid, H_vid,
+                    scaled_focal, W_vid, H_vid, hand_z_center
                 )
 
                 # -- Subsample to MAX_OBJ_POINTS --
