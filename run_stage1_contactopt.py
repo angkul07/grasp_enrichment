@@ -142,12 +142,17 @@ def rotmats_to_pca15(global_orient_rotmat, hand_pose_rotmat, betas):
 
     betas = betas.reshape(betas.shape[0], -1)
 
-    print("hp_aa_flat", hp_aa_flat.shape)
-    print("betas", betas.shape)
+    # print("hp_aa_flat", hp_aa_flat.shape)
+    # print("betas", betas.shape)
 
     full_pose = np.concatenate([go_aa, hp_aa_flat], axis=1)
-    hp_pca = fit_pca_to_axang(full_pose, betas)
+    pose_pca = fit_pca_to_axang(full_pose, betas)
 
+    pose_pca = np.asarray(pose_pca, dtype=np.float32).reshape(N, 18)  # (18 = 3 global orient + 15 pose) — we will split it back later
+    # go_aa  = np.asarray(go_aa, dtype=np.float32).reshape(N, 3)
+
+    go_aa  = pose_pca[:, :3]     # first 3 = global orient
+    hp_pca = pose_pca[:, 3:]     # next 15 = PCA hand pose
     return go_aa, hp_pca
 
 
@@ -307,6 +312,9 @@ def run_contactopt_on_frame(
     # Build a HandObject — ContactOpt's data structure
     # It wraps MANO forward pass + differentiable contact
     ho = HandObject()
+
+    global_orient_aa = np.asarray(global_orient_aa, dtype=np.float32).reshape(1, 3)
+    hand_pose_pca    = np.asarray(hand_pose_pca, dtype=np.float32).reshape(1, 15)
 
     full_pose = np.concatenate(
         [global_orient_aa, hand_pose_pca],
@@ -600,15 +608,12 @@ def process_video_h5(h5_path: str, device: torch.device, force_rerun: bool = Fal
                 contact_after_list.append(contact_after)
 
                 # ── Convert pose back to rot-mat ─────────────────────────
-                opt_go_rm, opt_hp_rm = pca15_to_rotmats(
-                    result["global_orient_aa"],   # (1, 3)
-                    result["hand_pose_pca"],       # (1, 15)
-                )
-                # opt_go_rm: (1, 1, 3, 3), opt_hp_rm: (1, 15, 3, 3)
-
                 opt_verts_all.append(opt_v_hamer)
-                opt_go_rm_all.append(opt_go_rm[0])    # (1, 3, 3)
-                opt_hp_rm_all.append(opt_hp_rm[0])    # (15, 3, 3)
+
+                # keep original MANO params for now
+                opt_go_rm_all.append(raw_go_rm[hand_idx])
+                opt_hp_rm_all.append(raw_hp_rm[hand_idx])
+
                 converged_all.append(result["converged"])
 
             # ── Write results to HDF5 ────────────────────────────────────
