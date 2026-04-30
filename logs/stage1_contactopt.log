@@ -2837,3 +2837,41 @@ NameError: name 'opt_go_rm' is not defined
 2026-04-30 17:17:56.892 | INFO     | __main__:process_video_h5:519 -   Object mesh: 3781 verts, 7447 faces
 2026-04-30 17:17:56.897 | SUCCESS  | __main__:process_video_h5:645 -   Done: 0 frames optimised, 22 skipped (already done)
 2026-04-30 17:17:56.926 | INFO     | __main__:main:808 - === Stage 1.3 Complete ===
+2026-04-30 17:28:51.023 | INFO     | __main__:main:792 - Device: cuda
+2026-04-30 17:28:51.023 | INFO     | __main__:main:793 - Processing 2 file(s)
+2026-04-30 17:28:51.024 | INFO     | __main__:process_video_h5:469 - 
+============================================================
+2026-04-30 17:28:51.024 | INFO     | __main__:process_video_h5:470 - Stage 1.3 ContactOpt: output/0_stage1.hdf5
+2026-04-30 17:28:51.026 | INFO     | __main__:process_video_h5:476 -   Object: stapler, Total frames: 126
+2026-04-30 17:28:51.174 | INFO     | __main__:process_video_h5:486 -   Building object mesh from point cloud...
+2026-04-30 17:28:51.185 | INFO     | __main__:process_video_h5:510 -   Scale factor (HaMeR→metric): 0.847541
+2026-04-30 17:28:55.937 | INFO     | __main__:process_video_h5:521 -   Object mesh: 2708 verts, 5290 faces
+2026-04-30 17:28:55.948 | SUCCESS  | __main__:process_video_h5:647 -   Done: 0 frames optimised, 33 skipped (already done)
+2026-04-30 17:28:55.996 | INFO     | __main__:process_video_h5:469 - 
+============================================================
+2026-04-30 17:28:55.997 | INFO     | __main__:process_video_h5:470 - Stage 1.3 ContactOpt: output/1_stage1.hdf5
+2026-04-30 17:28:55.998 | INFO     | __main__:process_video_h5:476 -   Object: iphone, Total frames: 160
+2026-04-30 17:28:56.112 | INFO     | __main__:process_video_h5:486 -   Building object mesh from point cloud...
+2026-04-30 17:28:56.125 | INFO     | __main__:process_video_h5:510 -   Scale factor (HaMeR→metric): 0.832216
+2026-04-30 17:28:58.576 | INFO     | __main__:process_video_h5:521 -   Object mesh: 3991 verts, 7860 faces
+2026-04-30 17:28:58.581 | SUCCESS  | __main__:process_video_h5:647 -   Done: 0 frames optimised, 22 skipped (already done)
+2026-04-30 17:28:58.612 | INFO     | __main__:main:810 - === Stage 1.3 Complete ===
+2026-04-30 17:33:58.854 | INFO     | __main__:main:792 - Device: cuda
+2026-04-30 17:33:58.854 | INFO     | __main__:main:793 - Processing 2 file(s)
+2026-04-30 17:33:58.855 | INFO     | __main__:process_video_h5:469 - 
+============================================================
+2026-04-30 17:33:58.855 | INFO     | __main__:process_video_h5:470 - Stage 1.3 ContactOpt: output/0_stage1.hdf5
+2026-04-30 17:33:58.858 | INFO     | __main__:process_video_h5:476 -   Object: stapler, Total frames: 126
+2026-04-30 17:33:59.015 | INFO     | __main__:process_video_h5:486 -   Building object mesh from point cloud...
+2026-04-30 17:33:59.027 | INFO     | __main__:process_video_h5:510 -   Scale factor (HaMeR→metric): 0.847541
+2026-04-30 17:34:03.659 | INFO     | __main__:process_video_h5:521 -   Object mesh: 2808 verts, 5457 faces
+2026-04-30 17:34:03.667 | SUCCESS  | __main__:process_video_h5:647 -   Done: 0 frames optimised, 33 skipped (already done)
+2026-04-30 17:34:03.714 | INFO     | __main__:process_video_h5:469 - 
+============================================================
+2026-04-30 17:34:03.714 | INFO     | __main__:process_video_h5:470 - Stage 1.3 ContactOpt: output/1_stage1.hdf5
+2026-04-30 17:34:03.715 | INFO     | __main__:process_video_h5:476 -   Object: iphone, Total frames: 160
+2026-04-30 17:34:03.829 | INFO     | __main__:process_video_h5:486 -   Building object mesh from point cloud...
+2026-04-30 17:34:03.842 | INFO     | __main__:process_video_h5:510 -   Scale factor (HaMeR→metric): 0.832216
+2026-04-30 17:34:06.493 | INFO     | __main__:process_video_h5:521 -   Object mesh: 5078 verts, 9956 faces
+2026-04-30 17:34:06.499 | SUCCESS  | __main__:process_video_h5:647 -   Done: 0 frames optimised, 22 skipped (already done)
+2026-04-30 17:34:06.532 | INFO     | __main__:main:810 - === Stage 1.3 Complete ===

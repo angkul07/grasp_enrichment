@@ -336,11 +336,13 @@ def run_contactopt_on_frame(
         opt_verts = result_ho.hand_verts.detach().cpu().numpy()        # (778, 3)
         converged = True
     except Exception as e:
-        logger.warning(f"ContactOpt failed: {e}")
-        opt_pose  = hand_pose_pca
-        opt_go    = global_orient_aa
-        opt_verts = None
-        converged = False
+        # logger.warning(f"ContactOpt failed: {e}")
+        logger.exception(e)
+        raise
+        # opt_pose  = hand_pose_pca
+        # opt_go    = global_orient_aa
+        # opt_verts = None
+        # converged = False
 
     return {
         "global_orient_aa": opt_go,
