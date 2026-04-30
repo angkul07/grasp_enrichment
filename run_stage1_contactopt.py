@@ -140,7 +140,13 @@ def rotmats_to_pca15(global_orient_rotmat, hand_pose_rotmat, betas):
     hp_aa = rotmat_to_axisangle(hand_pose_rotmat)
     hp_aa_flat = hp_aa.reshape(N,45)
 
-    hp_pca = fit_pca_to_axang(hp_aa_flat, betas)
+    betas = betas.reshape(betas.shape[0], -1)
+
+    print("hp_aa_flat", hp_aa_flat.shape)
+    print("betas", betas.shape)
+
+    full_pose = np.concatenate([go_aa, hp_aa_flat], axis=1)
+    hp_pca = fit_pca_to_axang(full_pose, betas)
 
     return go_aa, hp_pca
 
@@ -301,14 +307,18 @@ def run_contactopt_on_frame(
     # Build a HandObject — ContactOpt's data structure
     # It wraps MANO forward pass + differentiable contact
     ho = HandObject()
-    ho.load_from_params(
-        pose=torch.from_numpy(hand_pose_pca).float().to(device),          # (1, 15)
-        global_orient=torch.from_numpy(global_orient_aa).float().to(device),  # (1, 3)
-        betas=torch.from_numpy(betas).float().to(device),                 # (1, 10)
-        transl=torch.from_numpy(cam_t).float().to(device),               # (1, 3)
-        obj_verts=torch.from_numpy(obj_verts).float().to(device),        # (V, 3)
-        obj_faces=torch.from_numpy(obj_faces).long().to(device),         # (F, 3)
-        is_right=bool(is_right),
+
+    full_pose = np.concatenate(
+        [global_orient_aa, hand_pose_pca],
+        axis=1
+    ).squeeze(0)   # (18,)
+
+    ho.load_from_mano_params(
+        hand_beta=betas.squeeze(0),       # (10,)
+        hand_pose=full_pose,             # (18,)
+        hand_trans=cam_t.squeeze(0),     # (3,)
+        obj_faces=obj_faces,
+        obj_verts=obj_verts
     )
 
     try:
