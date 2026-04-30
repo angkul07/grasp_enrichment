@@ -102,31 +102,45 @@ def rotmat_to_axisangle(rotmats: np.ndarray) -> np.ndarray:
     return aa.reshape(*orig_shape, 3)
 
 
-def rotmats_to_pca15(
-    global_orient_rotmat: np.ndarray,   # (N_hands, 1, 3, 3)
-    hand_pose_rotmat: np.ndarray,       # (N_hands, 15, 3, 3)
-) -> tuple:
-    """
-    Convert HaMeR rotation-matrix MANO params to ContactOpt's PCA-15 format.
+# def rotmats_to_pca15(
+#     global_orient_rotmat: np.ndarray,   # (N_hands, 1, 3, 3)
+#     hand_pose_rotmat: np.ndarray,       # (N_hands, 15, 3, 3)
+# ) -> tuple:
+#     """
+#     Convert HaMeR rotation-matrix MANO params to ContactOpt's PCA-15 format.
 
-    Returns:
-        global_orient_aa:  (N_hands, 3)        axis-angle
-        hand_pose_pca:     (N_hands, 15)        PCA components
-    """
-    # Import ContactOpt's PCA converter
+#     Returns:
+#         global_orient_aa:  (N_hands, 3)        axis-angle
+#         hand_pose_pca:     (N_hands, 15)        PCA components
+#     """
+#     # Import ContactOpt's PCA converter
+#     from contactopt.util import fit_pca_to_axang
+
+#     N = global_orient_rotmat.shape[0]
+
+#     # global_orient: (N, 1, 3, 3) → (N, 3)
+#     go_aa = rotmat_to_axisangle(global_orient_rotmat[:, 0])   # (N, 3)
+
+#     # hand_pose: (N, 15, 3, 3) → (N, 15, 3) → (N, 45)
+#     hp_aa = rotmat_to_axisangle(hand_pose_rotmat)             # (N, 15, 3)
+#     hp_aa_flat = hp_aa.reshape(N, 45)
+
+#     # → (N, 15) PCA
+#     hp_pca = fit_pca_to_axang(hp_aa_flat)                     # (N, 15)
+
+#     return go_aa, hp_pca
+
+def rotmats_to_pca15(global_orient_rotmat, hand_pose_rotmat, betas):
     from contactopt.util import fit_pca_to_axang
 
     N = global_orient_rotmat.shape[0]
 
-    # global_orient: (N, 1, 3, 3) → (N, 3)
-    go_aa = rotmat_to_axisangle(global_orient_rotmat[:, 0])   # (N, 3)
+    go_aa = rotmat_to_axisangle(global_orient_rotmat[:,0])
 
-    # hand_pose: (N, 15, 3, 3) → (N, 15, 3) → (N, 45)
-    hp_aa = rotmat_to_axisangle(hand_pose_rotmat)             # (N, 15, 3)
-    hp_aa_flat = hp_aa.reshape(N, 45)
+    hp_aa = rotmat_to_axisangle(hand_pose_rotmat)
+    hp_aa_flat = hp_aa.reshape(N,45)
 
-    # → (N, 15) PCA
-    hp_pca = fit_pca_to_axang(hp_aa_flat)                     # (N, 15)
+    hp_pca = fit_pca_to_axang(hp_aa_flat, betas)
 
     return go_aa, hp_pca
 
@@ -364,18 +378,7 @@ def compute_contact_coverage(hand_verts: np.ndarray, obj_verts: np.ndarray) -> f
 # 6.  Grasping frame detection
 # ═══════════════════════════════════════════════════════════════════════════════
 
-def detect_grasp_frames(
-    h5_file: h5py.File,
-    total_frames: int,
-    percentile: float = 30,
-) -> list:
-    """
-    Heuristic: frames in the bottom-N-percentile of hand-object centroid distance
-    are likely to be grasping frames. This avoids running ContactOpt on approach
-    and release frames where the hand is far from the object.
-
-    Returns list of frame indices to process.
-    """
+def detect_grasp_frames(h5_file, total_frames, percentile=30):
     distances = []
     frame_indices = []
 
@@ -383,36 +386,59 @@ def detect_grasp_frames(
         key = f"frame_{fidx:06d}"
         if key not in h5_file:
             continue
+
         grp = h5_file[key]
+
         if int(grp.attrs.get("n_hands", 0)) == 0:
             continue
+
         if "obj_points_3d" not in grp:
             continue
 
-        # Hand centroid: median of cam_t (translation = wrist position)
-        cam_t = grp["cam_t"][:]   # (N_hands, 3)
+        if grp.attrs.get("obj_n_points", 0) < 30:
+            continue
+
+        cam_t = grp["cam_t"][:].astype(np.float32)
         hand_centroid = cam_t.mean(axis=0)
 
-        # Object centroid
         obj_pts = grp["obj_points_3d"][:].astype(np.float32)
+
+        if len(obj_pts) == 0:
+            continue
+
+        if not np.isfinite(obj_pts).all():
+            continue
+
         obj_centroid = obj_pts.mean(axis=0)
 
+        if not np.isfinite(obj_centroid).all():
+            continue
+
         dist = float(np.linalg.norm(hand_centroid - obj_centroid))
+
+        if not np.isfinite(dist):
+            continue
+
         distances.append(dist)
         frame_indices.append(fidx)
 
-    if not distances:
+    if len(distances) == 0:
         return []
 
     threshold = np.percentile(distances, percentile)
-    grasp_frames = [
-        fidx for fidx, d in zip(frame_indices, distances) if d <= threshold
+
+
+    # logger.info(
+    #     f"  Grasp frame detection: {len(grasp_frames)}/{len(frame_indices)} frames "
+    #     f"selected (distance threshold: {threshold:.4f})"
+    # )
+
+    return [
+        fidx for fidx, d in zip(frame_indices, distances)
+        if d <= threshold
     ]
-    logger.info(
-        f"  Grasp frame detection: {len(grasp_frames)}/{len(frame_indices)} frames "
-        f"selected (distance threshold: {threshold:.4f})"
-    )
-    return grasp_frames
+
+    # return grasp_frames
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -519,13 +545,15 @@ def process_video_h5(h5_path: str, device: torch.device, force_rerun: bool = Fal
                 cam_t_metric = raw_cam_t[hand_idx] * scale_factor    # (3,)
 
                 # ── Convert pose format ──────────────────────────────────
-                go_aa, hp_pca = rotmats_to_pca15(
-                    raw_go_rm[hand_idx:hand_idx+1],    # (1, 1, 3, 3)
-                    raw_hp_rm[hand_idx:hand_idx+1],    # (1, 15, 3, 3)
-                )
-                # go_aa: (1, 3), hp_pca: (1, 15)
+                betas_single = raw_betas[hand_idx:hand_idx+1]
 
-                betas_single = raw_betas[hand_idx:hand_idx+1]   # (1, 10)
+                go_aa, hp_pca = rotmats_to_pca15(
+                    raw_go_rm[hand_idx:hand_idx+1],
+                    raw_hp_rm[hand_idx:hand_idx+1],
+                    betas_single,
+                )
+
+                is_right = float(raw_is_right[hand_idx]) # (1, 10)
                 is_right     = float(raw_is_right[hand_idx])
 
                 # ── Metrics BEFORE ───────────────────────────────────────
